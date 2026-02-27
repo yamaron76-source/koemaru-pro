@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>初期評価フォーム（無料版）</title>
+  <style>
+    :root { --gap: 12px; --b: #e5e7eb; --bg:#f8fafc; --txt:#0f172a; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+      background: var(--bg); color: var(--txt); margin: 0; }
+    header { padding: 16px; background: white; border-bottom: 1px solid var(--b); position: sticky; top: 0; }
+    header h1 { font-size: 16px; margin: 0 0 6px; }
+    header .sub { font-size: 12px; color: #475569; line-height: 1.4; }
+    main { max-width: 860px; margin: 0 auto; padding: 16px; }
+    .card { background: white; border: 1px solid var(--b); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .card h2 { font-size: 14px; margin: 0 0 10px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: var(--gap); }
+    @media (min-width: 720px){ .row.two { grid-template-columns: 1fr 1fr; } }
+    label { display:block; font-size: 12px; color: #334155; margin-bottom: 6px; }
+    input[type="text"], textarea, select, input[type="date"] {
+      width: 100%; box-sizing: border-box; padding: 10px;
+      border: 1px solid var(--b); border-radius: 10px; background: white; font-size: 14px;
+    }
+    textarea { min-height: 70px; resize: vertical; }
+    .hint { font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.4; }
+    .btns { display:flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    button {
+      border: 1px solid var(--b); background: white; padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; font-size: 14px;
+    }
+    button.primary { background: #0ea5e9; border-color: #0ea5e9; color: white; }
+    button.danger { background: #fee2e2; border-color: #fecaca; }
+    .out { width: 100%; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Noto Sans Mono", monospace; }
+    .pill { display:inline-block; font-size: 12px; padding: 2px 8px; border: 1px solid var(--b); border-radius: 999px; background: #f1f5f9; margin-left: 6px; }
+    .req { color:#ef4444; font-weight: 700; margin-left: 4px; }
+    .warn { font-size: 12px; color:#b45309; line-height: 1.4; }
+    .ok { font-size: 12px; color:#15803d; }
+    footer { padding: 16px; text-align: center; font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>初期評価フォーム（無料版） <span class="pill">保存しない設計</span></h1>
+  <div class="sub">
+    ・患者氏名/住所/電話番号などは入力しない（ケースID運用）<br>
+    ・患者データは端末に保存しません（localStorage/cookie未使用）。送信機能は無料版では無し（コピーのみ）。
+  </div>
+</header>
+
+<main>
+  <div class="card" id="card_case">
+    <h2>ケース情報</h2>
+    <div class="row two">
+      <div>
+        <label for="case_id">ケースID<span class="req">＊</span></label>
+        <input type="text" id="case_id" placeholder="例）A-1234（氏名は入れない）" />
+        <div class="hint">※このIDだけで識別する運用を推奨</div>
+      </div>
+      <div>
+        <label for="date">日付</label>
+        <input type="date" id="date" />
+        <div class="hint">自動で今日が入ります（変更OK）</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label for="memo_short">メモ（任意）</label>
+      <textarea id="memo_short" placeholder="必要なことだけ（個人情報は入れない）"></textarea>
+    </div>
+  </div>
+
+  <div class="card" id="card_adl">
+    <h2>ADL（FIM寄り：5項目）</h2>
+    <div class="hint">見守り＝5（安全見守り／手順の声かけ／準備など）</div>
+
+    <div class="row two" style="margin-top:12px;">
+      <div>
+        <label for="fim_eating">食事</label>
+        <select id="fim_eating"></select>
+      </div>
+      <div>
+        <label for="fim_dressing_lower">更衣（下）</label>
+        <select id="fim_dressing_lower"></select>
+      </div>
+      <div>
+        <label for="fim_toileting">トイレ動作</label>
+        <select id="fim_toileting"></select>
+      </div>
+      <div>
+        <label for="fim_transfer_bed">移乗（ベッド）</label>
+        <select id="fim_transfer_bed"></select>
+      </div>
+      <div>
+        <label for="locomotion_mode">移動の方法</label>
+        <select id="locomotion_mode">
+          <option value="">未選択</option>
+          <option value="walk">歩行</option>
+          <option value="wheelchair">車椅子</option>
+          <option value="unknown">未確認</option>
+        </select>
+      </div>
+      <div>
+        <label for="fim_locomotion">移動（点数）</label>
+        <select id="fim_locomotion"></select>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <label for="adl_support_note">見守り/必要条件メモ（任意）</label>
+      <textarea id="adl_support_note" placeholder="例）安全見守り、手順声かけ、準備、手すり使用、時間増大 など"></textarea>
+    </div>
+  </div>
+
+  <div class="card" id="card_cog">
+    <h2>認知（FIM寄り：2項目）</h2>
+    <div class="row two" style="margin-top:12px;">
+      <div>
+        <label for="fim_comprehension">理解</label>
+        <select id="fim_comprehension"></select>
+      </div>
+      <div>
+        <label for="fim_memory">記憶</label>
+        <select id="fim_memory"></select>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label for="cog_note">認知メモ（任意）</label>
+      <textarea id="cog_note" placeholder="生活影響や支援が必要な点"></textarea>
+    </div>
+  </div>
+
+  <div class="card" id="card_output">
+    <h2>出力（コピーして記録へ）</h2>
+    <div class="warn">
+      ※無料版は「コピーのみ」。メール送信・項目追加削除・フル項目はPro版に搭載します。<br>
+      ※この出力には氏名などを入れない運用を推奨します。
+    </div>
+
+    <div class="btns">
+      <button class="primary" id="btn_generate">要約を生成</button>
+      <button id="btn_copy">コピー</button>
+      <button class="danger" id="btn_clear">入力をクリア</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label for="output">生成結果</label>
+      <textarea class="out" id="output" readonly></textarea>
+      <div id="copy_status" class="hint"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pro版でできること（予定）</h2>
+    <ul style="margin:0; padding-left:18px; line-height:1.6; font-size:14px;">
+      <li>家族背景/住環境/支援資源のフル項目</li>
+      <li>ADL（運動13項目）＋認知（5項目）</li>
+      <li>固定メールへワンタップ送信（mailto方式）</li>
+      <li>項目の追加・削除・並べ替え（自院仕様にカスタム）</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  初期評価フォーム（無料版）— 保存しない設計（患者データは端末に保存しません）
+</footer>
+
+<script>
+  // ---- No storage policy: do NOT use localStorage/cookies/indexedDB. ----
+  // FIM scale (watch=5)
+  const fimOptions = [
+    {v:"",  t:"未選択"},
+    {v:"7", t:"7 完全自立"},
+    {v:"6", t:"6 修正自立（装置・時間等）"},
+    {v:"5", t:"5 見守り／準備／口頭指示"},
+    {v:"4", t:"4 最小介助"},
+    {v:"3", t:"3 中等度介助"},
+    {v:"2", t:"2 最大介助"},
+    {v:"1", t:"1 全介助"}
+  ];
+
+  function fillFimSelect(id){
+    const el = document.getElementById(id);
+    el.innerHTML = "";
+    fimOptions.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v;
+      opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
+
+  function yyyymmdd(dateStr){
+    if(!dateStr) return "";
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
+  }
+
+  function locomotionModeLabel(v){
+    if(v==="walk") return "歩行";
+    if(v==="wheelchair") return "車椅子";
+    if(v==="unknown") return "未確認";
+    return "未選択";
+  }
+
+  function safeText(s){ return (s ?? "").toString().trim(); }
+
+  function buildSummary(){
+    const caseId = safeText(document.getElementById("case_id").value);
+    if(!caseId){
+      alert("ケースID（必須）を入力してください。");
+      document.getElementById("case_id").focus();
+      return "";
+    }
+    const date = safeText(document.getElementById("date").value);
+    const memo = safeText(document.getElementById("memo_short").value);
+
+    const eating = safeText(document.getElementById("fim_eating").value);
+    const dressingLower = safeText(document.getElementById("fim_dressing_lower").value);
+    const toileting = safeText(document.getElementById("fim_toileting").value);
+    const transferBed = safeText(document.getElementById("fim_transfer_bed").value);
+
+    const locMode = safeText(document.getElementById("locomotion_mode").value);
+    const locModeLabel = locomotionModeLabel(locMode);
+    const locomotion = safeText(document.getElementById("fim_locomotion").value);
+
+    const adlSupport = safeText(document.getElementById("adl_support_note").value);
+
+    const comprehension = safeText(document.getElementById("fim_comprehension").value);
+    const memory = safeText(document.getElementById("fim_memory").value);
+    const cogNote = safeText(document.getElementById("cog_note").value);
+
+    const lines = [];
+    lines.push(`【ケース】${caseId}／${yyyymmdd(date) || "（日付未入力）"}`);
+    lines.push(`【ADL(FIM)】食事:${eating||"-"}／更衣下:${dressingLower||"-"}／トイレ動作:${toileting||"-"}／移乗(ベッド):${transferBed||"-"}／移動(${locModeLabel}):${locomotion||"-"}`);
+    lines.push(`【認知(FIM)】理解:${comprehension||"-"}／記憶:${memory||"-"}`);
+    if(memo) lines.push(`【メモ】${memo}`);
+    if(adlSupport) lines.push(`【ADL補足】${adlSupport}`);
+    if(cogNote) lines.push(`【認知補足】${cogNote}`);
+
+    return lines.join("\n");
+  }
+
+  function clearAll(){
+    const ids = [
+      "case_id","memo_short","fim_eating","fim_dressing_lower","fim_toileting","fim_transfer_bed",
+      "locomotion_mode","fim_locomotion","adl_support_note","fim_comprehension","fim_memory","cog_note"
+    ];
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(el.tagName === "SELECT") el.value = "";
+      else el.value = "";
+    });
+    document.getElementById("output").value = "";
+    document.getElementById("copy_status").textContent = "";
+    // Date resets to today
+    document.getElementById("date").valueAsDate = new Date();
+  }
+
+  async function copyOutput(){
+    const text = document.getElementById("output").value;
+    if(!text){
+      document.getElementById("copy_status").textContent = "先に「要約を生成」してください。";
+      return;
+    }
+    try{
+      await navigator.clipboard.writeText(text);
+      document.getElementById("copy_status").innerHTML = `<span class="ok">コピーしました。</span>`;
+    }catch(e){
+      // Fallback
+      const out = document.getElementById("output");
+      out.focus();
+      out.select();
+      document.execCommand("copy");
+      document.getElementById("copy_status").innerHTML = `<span class="ok">コピーしました（互換モード）。</span>`;
+    }
+  }
+
+  // init
+  ["fim_eating","fim_dressing_lower","fim_toileting","fim_transfer_bed","fim_locomotion","fim_comprehension","fim_memory"]
+    .forEach(fillFimSelect);
+
+  document.getElementById("date").valueAsDate = new Date();
+
+  document.getElementById("btn_generate").addEventListener("click", ()=>{
+    const summary = buildSummary();
+    if(summary){
+      document.getElementById("output").value = summary;
+      document.getElementById("copy_status").textContent = "";
+    }
+  });
+
+  document.getElementById("btn_copy").addEventListener("click", copyOutput);
+  document.getElementById("btn_clear").addEventListener("click", ()=>{
+    if(confirm("入力をクリアします。よろしいですか？")){
+      clearAll();
+    }
+  });
+
+  // Best-effort cleanup on page hide (not a perfect guarantee, but helps)
+  window.addEventListener("pagehide", ()=> {
+    try { clearAll(); } catch(_) {}
+  });
+</script>
+</body>
+</html>
