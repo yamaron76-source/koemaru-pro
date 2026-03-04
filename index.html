@@ -1,172 +1,751 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>初期評価フォーム（無料版）</title>
+  <title>初期評価フォーム（Pro フル）</title>
   <style>
-    :root { --gap: 12px; --b: #e5e7eb; --bg:#f8fafc; --txt:#0f172a; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
-      background: var(--bg); color: var(--txt); margin: 0; }
-    header { padding: 16px; background: white; border-bottom: 1px solid var(--b); position: sticky; top: 0; }
-    header h1 { font-size: 16px; margin: 0 0 6px; }
-    header .sub { font-size: 12px; color: #475569; line-height: 1.4; }
-    main { max-width: 860px; margin: 0 auto; padding: 16px; }
-    .card { background: white; border: 1px solid var(--b); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-    .card h2 { font-size: 14px; margin: 0 0 10px; }
-    .row { display: grid; grid-template-columns: 1fr; gap: var(--gap); }
-    @media (min-width: 720px){ .row.two { grid-template-columns: 1fr 1fr; } }
-    label { display:block; font-size: 12px; color: #334155; margin-bottom: 6px; }
-    input[type="text"], textarea, select, input[type="date"] {
-      width: 100%; box-sizing: border-box; padding: 10px;
-      border: 1px solid var(--b); border-radius: 10px; background: white; font-size: 14px;
+    :root{ --radius:16px; --gap:12px; }
+    html[data-theme="light"]{
+      --page:#f6f7fb; --page2:#eef2ff; --card:#ffffff; --border:#e5e7eb;
+      --text:#0f172a; --muted:#64748b; --accent:#2563eb; --accent2:#0ea5e9;
+      --danger:#ef4444; --ok:#16a34a; --shadow: 0 10px 30px rgba(15,23,42,.10);
+      --chip:#f1f5f9; --input:#ffffff; --tablehead:#f8fafc;
     }
-    textarea { min-height: 70px; resize: vertical; }
-    .hint { font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.4; }
-    .btns { display:flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    button {
-      border: 1px solid var(--b); background: white; padding: 10px 12px; border-radius: 10px;
-      cursor: pointer; font-size: 14px;
+    html[data-theme="dark"]{
+      --page:#0b1220; --page2:#0b3b6b; --card: rgba(15,23,42,.78); --border: rgba(255,255,255,.12);
+      --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent2:#0ea5e9;
+      --danger:#fb7185; --ok:#22c55e; --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --chip: rgba(2,6,23,.35); --input: rgba(2,6,23,.35); --tablehead: rgba(2,6,23,.25);
     }
-    button.primary { background: #0ea5e9; border-color: #0ea5e9; color: white; }
-    button.danger { background: #fee2e2; border-color: #fecaca; }
-    .out { width: 100%; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Noto Sans Mono", monospace; }
-    .pill { display:inline-block; font-size: 12px; padding: 2px 8px; border: 1px solid var(--b); border-radius: 999px; background: #f1f5f9; margin-left: 6px; }
-    .req { color:#ef4444; font-weight: 700; margin-left: 4px; }
-    .warn { font-size: 12px; color:#b45309; line-height: 1.4; }
-    .ok { font-size: 12px; color:#15803d; }
-    footer { padding: 16px; text-align: center; font-size: 12px; color: #64748b; }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;
+      background:
+        radial-gradient(900px 600px at 15% 10%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+        linear-gradient(180deg, var(--page), var(--page2));
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(8px);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1120px; margin:0 auto; padding:14px 16px;}
+    h1{margin:0; font-size:16px}
+    .sub{font-size:12px; color:var(--muted); line-height:1.55; margin-top:6px}
+    .pill{
+      display:inline-block; margin-left:8px; font-size:12px; padding:2px 10px;
+      border:1px solid var(--border); border-radius:999px; background: var(--chip);
+    }
+    .topbar{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+    .topbtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--border); background: var(--chip); color: var(--text);
+      padding:8px 10px; border-radius: 12px; cursor:pointer; font-size:13px;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, #fff), var(--accent2));
+      color:#06213a; font-weight:800;
+      border-color: color-mix(in srgb, var(--accent2) 35%, var(--border));
+    }
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 40%, var(--border));}
+    .btn.ok{border-color: color-mix(in srgb, var(--ok) 40%, var(--border));}
+
+    main{max-width:1120px; margin:0 auto; padding:16px;}
+    .card{
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      margin-bottom:14px;
+    }
+    .card h2{
+      margin:0 0 10px; font-size:14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .hint{font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px}
+    .grid{display:grid; grid-template-columns:1fr; gap: var(--gap);}
+    @media (min-width: 920px){ .grid.two{grid-template-columns:1fr 1fr;} .grid.three{grid-template-columns:1fr 1fr 1fr;} }
+    label{display:block; font-size:12px; color: color-mix(in srgb, var(--text) 70%, var(--muted)); margin-bottom:6px}
+    input[type="text"], input[type="number"], input[type="date"], textarea, select{
+      width:100%;
+      background: var(--input);
+      border:1px solid var(--border);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px;
+      font-size:14px;
+      outline:none;
+    }
+    textarea{min-height:70px; resize:vertical}
+    select option{background: var(--card); color:var(--text)}
+    .btns{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+    .rowline{height:1px; background: var(--border); margin:12px 0}
+    .out{
+      width:100%; min-height:360px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Noto Sans Mono", monospace;
+    }
+    .req{color:var(--danger); font-weight:900; margin-left:4px}
+    .badge{
+      font-size:12px; padding:2px 10px; border-radius:999px; border:1px solid var(--border);
+      background: var(--chip);
+      color: color-mix(in srgb, var(--text) 85%, var(--muted));
+      white-space:nowrap;
+    }
+    .score{
+      font-size:14px; font-weight:900; color:var(--text);
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .score strong{color: var(--accent2)}
+    .toast{font-size:12px; margin-top:6px; color: var(--muted)}
+    .chkline{display:flex; flex-wrap:wrap; gap:8px}
+    .chk{
+      display:flex; align-items:center; gap:6px;
+      padding:8px 10px; border-radius: 12px;
+      border:1px solid var(--border);
+      background: var(--chip);
+      font-size:13px; color:var(--text);
+    }
+    .chk input{accent-color: var(--accent2)}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; padding:2px 6px; border:1px solid var(--border); border-radius:8px; background: var(--chip)}
+
+    .stickyScore{
+      position: sticky;
+      top: 64px;
+      z-index: 5;
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--card) 92%, transparent);
+    }
+    .table th, .table td{
+      border-bottom:1px solid var(--border);
+      padding:10px;
+      vertical-align:top;
+      font-size:13px;
+    }
+    .table th{
+      text-align:left; font-size:12px; color:var(--muted);
+      background: var(--tablehead);
+    }
+    .table tr:last-child td{border-bottom:none}
+    .qno{width:44px; text-align:center; font-weight:900}
+    .pts{width:270px}
+    .mini{font-size:12px; color:var(--muted); line-height:1.35}
+    .inline{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .ptsel{width:100%}
+    .q2grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:6px;
+    }
+    .q2cell{display:flex; gap:6px; align-items:center}
+    .q2cell label{margin:0; font-size:12px; color:var(--muted)}
+    .q2cell select{padding:8px}
+
+    .fim-item{
+      border:1px solid var(--border);
+      background: color-mix(in srgb, var(--chip) 65%, transparent);
+      border-radius: 14px;
+      padding:10px;
+    }
+    .fim-head{
+      display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .fim-title{font-weight:900; font-size:13px}
+    .fim-row{display:grid; grid-template-columns:1fr; gap:8px}
+    @media (min-width: 920px){ .fim-row{grid-template-columns:1fr 1fr;} }
+    .fim-needed{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .fim-needed .chk{padding:6px 8px; font-size:12px}
+    .subcard{
+      border:1px dashed var(--border);
+      border-radius: 14px;
+      padding:10px;
+      background: color-mix(in srgb, var(--card) 92%, transparent);
+      margin-top:10px;
+    }
   </style>
 </head>
 <body>
 <header>
-  <h1>初期評価フォーム（無料版） <span class="pill">保存しない設計</span></h1>
-  <div class="sub">
-    ・患者氏名/住所/電話番号などは入力しない（ケースID運用）<br>
-    ・患者データは端末に保存しません（localStorage/cookie未使用）。送信機能は無料版では無し（コピーのみ）。
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>初期評価フォーム（Pro フル） <span class="pill">淡色表示</span></h1>
+        <div class="sub">
+          ・患者氏名/住所/電話番号などは入力しない（ケースID運用）<br>
+          ・患者データは端末に保存しません（localStorage/cookie未使用）<br>
+          ・保存/共有するのは <span class="kbd">送信先メール</span> と <span class="kbd">設定（カスタム項目構成）</span> のみ（患者情報は含めません）<br>
+          ・見守り＝5（安全見守り／手順声かけ／準備）前提
+        </div>
+      </div>
+      <div class="topbtns">
+        <button class="btn" id="btn_theme">ダーク切替</button>
+      </div>
+    </div>
   </div>
 </header>
 
 <main>
-  <div class="card" id="card_case">
-    <h2>ケース情報</h2>
-    <div class="row two">
-      <div>
-        <label for="case_id">ケースID<span class="req">＊</span></label>
-        <input type="text" id="case_id" placeholder="例）A-1234（氏名は入れない）" />
-        <div class="hint">※このIDだけで識別する運用を推奨</div>
-      </div>
-      <div>
-        <label for="date">日付</label>
-        <input type="date" id="date" />
-        <div class="hint">自動で今日が入ります（変更OK）</div>
-      </div>
+
+  <div class="stickyScore">
+    <div class="score">
+      FIM 合計：<strong id="fim_total">0</strong>
+      <span class="badge">運動13：<span id="fim_motor">0</span></span>
+      <span class="badge">認知5：<span id="fim_cog">0</span></span>
+      <span class="badge">入力済：<span id="fim_count">0</span>/18</span>
+      <span class="badge">HDS-R：<span id="hds_total_top">0</span>/30</span>
     </div>
-    <div style="margin-top:12px;">
-      <label for="memo_short">メモ（任意）</label>
-      <textarea id="memo_short" placeholder="必要なことだけ（個人情報は入れない）"></textarea>
-    </div>
+    <div class="hint">※未選択の項目は合計に含めません（入力した分だけ集計）</div>
   </div>
 
-  <div class="card" id="card_adl">
-    <h2>ADL（FIM寄り：5項目）</h2>
-    <div class="hint">見守り＝5（安全見守り／手順の声かけ／準備など）</div>
-
-    <div class="row two" style="margin-top:12px;">
+  <div class="card">
+    <h2>メール送信先（初期設定） <span class="badge">端末に保存：宛先のみ</span></h2>
+    <div class="hint">※保存されるのは「送信先メールアドレス」だけ（患者データは保存しません）。端末共有の場合は「宛先クリア」を推奨。</div>
+    <div class="grid two" style="margin-top:12px;">
       <div>
-        <label for="fim_eating">食事</label>
-        <select id="fim_eating"></select>
+        <label>送信先メール（固定）</label>
+        <input id="mail_to" type="text" placeholder="例）team@example.com">
       </div>
       <div>
-        <label for="fim_dressing_lower">更衣（下）</label>
-        <select id="fim_dressing_lower"></select>
+        <label>操作</label>
+        <div class="btns" style="margin-top:0;">
+          <button class="btn ok" id="btn_mail_save">宛先を保存</button>
+          <button class="btn danger" id="btn_mail_clear">宛先クリア</button>
+        </div>
+        <div class="toast" id="mail_status"></div>
       </div>
-      <div>
-        <label for="fim_toileting">トイレ動作</label>
-        <select id="fim_toileting"></select>
-      </div>
-      <div>
-        <label for="fim_transfer_bed">移乗（ベッド）</label>
-        <select id="fim_transfer_bed"></select>
-      </div>
-      <div>
-        <label for="locomotion_mode">移動の方法</label>
-        <select id="locomotion_mode">
-          <option value="">未選択</option>
-          <option value="walk">歩行</option>
-          <option value="wheelchair">車椅子</option>
-          <option value="unknown">未確認</option>
-        </select>
-      </div>
-      <div>
-        <label for="fim_locomotion">移動（点数）</label>
-        <select id="fim_locomotion"></select>
-      </div>
-    </div>
-
-    <div style="margin-top:12px;">
-      <label for="adl_support_note">見守り/必要条件メモ（任意）</label>
-      <textarea id="adl_support_note" placeholder="例）安全見守り、手順声かけ、準備、手すり使用、時間増大 など"></textarea>
-    </div>
-  </div>
-
-  <div class="card" id="card_cog">
-    <h2>認知（FIM寄り：2項目）</h2>
-    <div class="row two" style="margin-top:12px;">
-      <div>
-        <label for="fim_comprehension">理解</label>
-        <select id="fim_comprehension"></select>
-      </div>
-      <div>
-        <label for="fim_memory">記憶</label>
-        <select id="fim_memory"></select>
-      </div>
-    </div>
-    <div style="margin-top:12px;">
-      <label for="cog_note">認知メモ（任意）</label>
-      <textarea id="cog_note" placeholder="生活影響や支援が必要な点"></textarea>
-    </div>
-  </div>
-
-  <div class="card" id="card_output">
-    <h2>出力（コピーして記録へ）</h2>
-    <div class="warn">
-      ※無料版は「コピーのみ」。メール送信・項目追加削除・フル項目はPro版に搭載します。<br>
-      ※この出力には氏名などを入れない運用を推奨します。
-    </div>
-
-    <div class="btns">
-      <button class="primary" id="btn_generate">要約を生成</button>
-      <button id="btn_copy">コピー</button>
-      <button class="danger" id="btn_clear">入力をクリア</button>
-    </div>
-
-    <div style="margin-top:10px;">
-      <label for="output">生成結果</label>
-      <textarea class="out" id="output" readonly></textarea>
-      <div id="copy_status" class="hint"></div>
     </div>
   </div>
 
   <div class="card">
-    <h2>Pro版でできること（予定）</h2>
-    <ul style="margin:0; padding-left:18px; line-height:1.6; font-size:14px;">
-      <li>家族背景/住環境/支援資源のフル項目</li>
-      <li>ADL（運動13項目）＋認知（5項目）</li>
-      <li>固定メールへワンタップ送信（mailto方式）</li>
-      <li>項目の追加・削除・並べ替え（自院仕様にカスタム）</li>
-    </ul>
+    <h2>ケース情報 <span class="badge">必須：ケースID</span></h2>
+    <div class="grid two">
+      <div>
+        <label>ケースID<span class="req">＊</span></label>
+        <input id="case_id" type="text" placeholder="例）A-1234（氏名は入れない）">
+      </div>
+      <div>
+        <label>日付</label>
+        <input id="date" type="date">
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>メモ（任意）</label>
+      <textarea id="note_general" placeholder="個人情報は入れない"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>家族・同居</h2>
+    <div class="grid three">
+      <div><label>退院先</label><select id="discharge_plan"></select></div>
+      <div><label>同居</label><select id="living_status"></select></div>
+      <div><label>主介護者（続柄）</label><select id="main_caregiver"></select></div>
+      <div><label>家族支援頻度</label><select id="support_frequency"></select></div>
+      <div><label>本人希望</label><select id="wish_patient"></select></div>
+      <div><label>家族希望</label><select id="wish_family"></select></div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="family_note"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>住環境</h2>
+    <div class="grid three">
+      <div><label>住宅形態</label><select id="housing_type"></select></div>
+      <div><label>階段</label><select id="stairs"></select></div>
+      <div><label>寝室</label><select id="bedroom_floor"></select></div>
+      <div><label>トイレ</label><select id="toilet_floor"></select></div>
+      <div><label>玄関段差</label><select id="entrance_step"></select></div>
+      <div>
+        <label>浴室（該当チェック）</label>
+        <div class="chkline" id="bathroom_checks"></div>
+      </div>
+      <div style="grid-column:1/-1;">
+        <label>福祉用具・環境（該当チェック）</label>
+        <div class="chkline" id="device_checks"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="env_note"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>支援資源</h2>
+    <div class="grid three">
+      <div><label>介護保険</label><select id="ltc_insurance"></select></div>
+      <div>
+        <label>利用サービス（該当チェック）</label>
+        <div class="chkline" id="services_checks"></div>
+      </div>
+      <div><label>通院支援</label><select id="outpatient_support"></select></div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="support_note"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>起居動作</h2>
+    <div class="hint">自立 / 支持物で可 / 見守り / 一部介助 / 全介助 / 不可</div>
+    <div class="grid two" style="margin-top:12px;">
+      <div><label>寝返り</label><select id="bed_roll"></select></div>
+      <div><label>起き上がり</label><select id="bed_situp"></select></div>
+      <div><label>座位保持</label><select id="bed_sitting"></select></div>
+      <div><label>立ち上がり</label><select id="bed_standup"></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>身体所見（麻痺・ROM・感覚・疼痛）</h2>
+    <div class="grid" style="gap:14px;">
+      <div>
+        <div class="score">麻痺（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="paral_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="paral_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="paral_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="paral_le_r">下肢 右</label>
+        </div>
+      </div>
+
+      <div>
+        <div class="score">可動域制限（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="rom_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="rom_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="rom_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="rom_le_r">下肢 右</label>
+        </div>
+      </div>
+
+      <div>
+        <div class="score">感覚障害（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="sens_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="sens_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="sens_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="sens_le_r">下肢 右</label>
+          <label class="chk"><input type="checkbox" id="sens_other">その他</label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>感覚障害（その他）</label>
+          <input id="sens_other_note" type="text" placeholder="例）体幹、手指、足底など">
+        </div>
+      </div>
+
+      <div>
+        <div class="score">疼痛</div>
+        <div class="grid two" style="margin-top:10px;">
+          <div>
+            <label>疼痛</label>
+            <select id="pain_yes">
+              <option value="">未選択</option>
+              <option value="なし">なし</option>
+              <option value="あり">あり</option>
+            </select>
+          </div>
+          <div>
+            <label>部位（備考）</label>
+            <input id="pain_site" type="text" placeholder="例）右肩、腰部、左膝など">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>改訂長谷川式簡易知能評価（HDS-R） <span class="badge">設問＋採点候補</span></h2>
+    <div class="hint">点数入力で自動合計。Q9（野菜）は「個数→点数自動」。</div>
+
+    <table class="table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th class="qno">No</th>
+          <th>設問</th>
+          <th class="pts">採点（候補）・入力</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="qno">1</td>
+          <td>お歳はいくつですか？（2年までの誤差は正解）</td>
+          <td class="pts"><div class="mini">0 / 1</div><select id="hds_q1" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">2</td>
+          <td>今日は何年何月何日ですか？ 何曜日ですか？（年/月/日/曜日：各1点）</td>
+          <td class="pts">
+            <div class="mini">年 0/1　月 0/1　日 0/1　曜日 0/1</div>
+            <div class="q2grid">
+              <div class="q2cell"><label>年</label><select id="hds_q2_y"></select></div>
+              <div class="q2cell"><label>月</label><select id="hds_q2_m"></select></div>
+              <div class="q2cell"><label>日</label><select id="hds_q2_d"></select></div>
+              <div class="q2cell"><label>曜</label><select id="hds_q2_w"></select></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">3</td>
+          <td>私たちが今いるところはどこですか？（自発2点／5秒後に正答1点）</td>
+          <td class="pts"><div class="mini">0 / 1 / 2</div><select id="hds_q3" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">4</td>
+          <td>3つの言葉（直後再生：各1点）<br><span class="mini">採用系列：桜/猫/電車、梅/犬/自動車 など</span></td>
+          <td class="pts">
+            <div class="mini">言葉1/2/3：各 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">言葉1</label><select id="hds_q4_a"></select>
+              <label class="mini">言葉2</label><select id="hds_q4_b"></select>
+              <label class="mini">言葉3</label><select id="hds_q4_c"></select>
+            </div>
+            <div style="margin-top:8px;">
+              <label class="mini">採用した言葉（任意メモ）</label>
+              <input id="hds_q4_words" type="text" placeholder="例）桜/猫/電車">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">5</td>
+          <td>100-7=?、さらに-7=?</td>
+          <td class="pts">
+            <div class="mini">93 0/1　86 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">93</label><select id="hds_q5_1"></select>
+              <label class="mini">86</label><select id="hds_q5_2"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">6</td>
+          <td>数字の逆唱（6-8-2／3-5-2-9）</td>
+          <td class="pts">
+            <div class="mini">各 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">2-8-6</label><select id="hds_q6_1"></select>
+              <label class="mini">9-2-5-3</label><select id="hds_q6_2"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">7</td>
+          <td>遅延再生（自発2点／ヒント1点）</td>
+          <td class="pts">
+            <div class="mini">言葉1/2/3：各 0/1/2</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">言葉1</label><select id="hds_q7_a"></select>
+              <label class="mini">言葉2</label><select id="hds_q7_b"></select>
+              <label class="mini">言葉3</label><select id="hds_q7_c"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">8</td>
+          <td>5つの物品の再生</td>
+          <td class="pts"><div class="mini">0〜5</div><select id="hds_q8" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">9</td>
+          <td>野菜の名前（個数→点数自動）<br><span class="mini">0〜5=0点、6=1、7=2、8=3、9=4、10以上=5</span></td>
+          <td class="pts">
+            <div class="mini">個数 → 自動採点（0〜5点）</div>
+            <div class="inline" style="margin-top:6px;">
+              <input id="hds_q9_count" type="number" min="0" step="1" style="width:120px" placeholder="個数">
+              <span class="badge">点数：<span id="hds_q9_score">0</span></span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rowline"></div>
+    <div class="score">HDS-R 合計：<strong id="hds_total">0</strong>/30</div>
+  </div>
+
+  <div class="card">
+    <h2>運動（FIM 13項目） <span class="badge">項目ごとの紐づけ</span></h2>
+    <div class="hint">
+      紐づけ：見守り（安全/手順）・準備・支持物・補助具（細項目）・時間増大・疲労で低下。<br>
+      ※介助量（最小/中等度/最大/全介助）は紐づけから除外（点数で表現）
+    </div>
+    <div class="grid two" id="fim_motor_wrap" style="margin-top:12px;"></div>
+    <div class="rowline"></div>
+    <div class="hint">全体補足（任意）</div>
+    <textarea id="adl_note" placeholder="例）介助ポイント、時間増大、疲労で低下など"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>認知（FIM 5項目） <span class="badge">紐づけなし</span></h2>
+    <div class="grid two" id="fim_cog_wrap" style="margin-top:12px;"></div>
+    <div class="hint" style="margin-top:10px;">生活影響・支援（任意）</div>
+    <textarea id="cog_note" placeholder="例）注意逸れやすい、手順分割が有効、外的手掛かりが必要 など"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>カスタム項目（追加・削除） <span class="badge">自院仕様に増減</span></h2>
+    <div class="hint">※ここで追加するのは「項目の型」です（患者データではありません）。</div>
+    <div class="grid three" style="margin-top:12px;">
+      <div><label>項目名</label><input id="cf_label" type="text" placeholder="例）家屋評価：手すり設置予定"></div>
+      <div>
+        <label>入力タイプ</label>
+        <select id="cf_type">
+          <option value="text">短文（1行）</option>
+          <option value="textarea">長文（メモ）</option>
+          <option value="select">選択（単一）</option>
+          <option value="multiselect">選択（複数）</option>
+        </select>
+      </div>
+      <div><label>選択肢（選択タイプのみ）</label><input id="cf_options" type="text" placeholder="例）あり,なし,未確認"></div>
+    </div>
+    <div class="btns">
+      <button class="btn ok" id="btn_cf_add">項目を追加</button>
+      <button class="btn" id="btn_cf_clear">入力欄クリア</button>
+    </div>
+    <div class="rowline"></div>
+    <div class="hint">追加した項目一覧（↑↓で並べ替え／削除できます）</div>
+    <div id="custom_list" class="grid" style="margin-top:10px;"></div>
+    <div id="custom_values_form" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>設定（config.json） <span class="badge">書き出し／読み込み</span></h2>
+    <div class="btns">
+      <button class="btn" id="btn_export">設定を書き出し（config.json）</button>
+      <button class="btn" id="btn_import">設定を読み込み</button>
+      <button class="btn danger" id="btn_config_reset">設定を初期化</button>
+      <input id="file_input" type="file" accept="application/json" style="display:none;">
+    </div>
+    <div class="toast" id="cfg_status"></div>
+  </div>
+
+  <div class="card">
+    <h2>出力（コピー／メール作成）</h2>
+    <div class="btns">
+      <button class="btn primary" id="btn_generate">要約を生成</button>
+      <button class="btn ok" id="btn_copy">コピー</button>
+      <button class="btn primary" id="btn_mail">メール作成（本文入り）</button>
+      <button class="btn danger" id="btn_clear">入力をクリア</button>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div style="margin-top:10px;">
+      <label>生成結果</label>
+      <textarea class="out" id="output" readonly></textarea>
+    </div>
   </div>
 
 </main>
 
-<footer>
-  初期評価フォーム（無料版）— 保存しない設計（患者データは端末に保存しません）
-</footer>
-
 <script>
-  // ---- No storage policy: do NOT use localStorage/cookies/indexedDB. ----
-  // FIM scale (watch=5)
+  const MAIL_KEY   = "koemaru_mail_to";
+  const CONFIG_KEY = "koemaru_pro_config_v6";
+  const THEME_KEY  = "koemaru_theme";
+
+  const $ = (id)=>document.getElementById(id);
+  const trim = (s)=> (s ?? "").toString().trim();
+
+  function setToday(){ $("date").valueAsDate = new Date(); }
+  function yyyymmdd(dateStr){
+    if(!dateStr) return "";
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}${m}${da}`;
+  }
+  function yyyy_mm_dd(dateStr){
+    if(!dateStr) return "";
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
+  }
+  function toast(msg, ok=true){
+    const el = $("toast");
+    el.textContent = msg;
+    el.style.color = ok ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
+    setTimeout(()=>{ el.textContent=""; el.style.color=""; }, 2500);
+  }
+  function cfgToast(msg, ok=true){
+    const el = $("cfg_status");
+    el.textContent = msg;
+    el.style.color = ok ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
+    setTimeout(()=>{ el.textContent=""; el.style.color=""; }, 3000);
+  }
+
+  // Theme
+  function setTheme(t){
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem(THEME_KEY, t);
+    $("btn_theme").textContent = (t==="dark") ? "淡色に戻す" : "ダーク切替";
+  }
+  function initTheme(){
+    const saved = localStorage.getItem(THEME_KEY);
+    if(saved==="dark" || saved==="light") setTheme(saved);
+    $("btn_theme").addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") || "light";
+      setTheme(cur==="light" ? "dark" : "light");
+    });
+  }
+
+  // Mail
+  function getMailTo(){ return (localStorage.getItem(MAIL_KEY) || "").trim(); }
+  function setMailTo(v){ localStorage.setItem(MAIL_KEY, (v||"").trim()); }
+  function clearMailTo(){ localStorage.removeItem(MAIL_KEY); }
+  function initMailSetting(){
+    const saved = getMailTo();
+    const input = $("mail_to");
+    const status = $("mail_status");
+    input.value = saved;
+    status.textContent = saved ? "設定済み（変更可能）" : "未設定：宛先を保存してください";
+    status.style.color = saved ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
+
+    $("btn_mail_save").addEventListener("click", ()=>{
+      const v = trim(input.value);
+      if(!v || !v.includes("@")){
+        status.textContent = "メールアドレスを入力してください";
+        status.style.color = "rgba(239,68,68,.95)";
+        return;
+      }
+      setMailTo(v);
+      status.textContent = "保存しました（変更可能）";
+      status.style.color = "rgba(22,163,74,.95)";
+      toast("宛先を保存しました。");
+    });
+
+    $("btn_mail_clear").addEventListener("click", ()=>{
+      clearMailTo();
+      input.value = "";
+      status.textContent = "クリアしました（未設定）";
+      status.style.color = "rgba(239,68,68,.95)";
+      toast("宛先をクリアしました。");
+    });
+  }
+
+  // Select helpers
+  function fillSelect(id, options){
+    const el = $(id);
+    el.innerHTML = "";
+    options.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v; opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
+  function makeChecks(containerId, items){
+    const wrap = $(containerId);
+    wrap.innerHTML = "";
+    items.forEach(it=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const inp = document.createElement("input");
+      inp.type = "checkbox";
+      inp.id = it.id;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(it.label));
+      wrap.appendChild(lab);
+    });
+  }
+  function readCheckLabelsFromContainer(containerId){
+    const c = document.getElementById(containerId);
+    if(!c) return [];
+    return Array.from(c.querySelectorAll("input[type=checkbox]"))
+      .filter(cb=>cb.checked)
+      .map(cb => cb.parentElement.textContent.trim());
+  }
+
+  // Static option sets
+  const optDischarge = [{v:"",t:"未選択"},{v:"home",t:"自宅"},{v:"facility",t:"施設"},{v:"transfer",t:"転院"},{v:"undecided",t:"未定"}];
+  const optLiving = [{v:"",t:"未選択"},{v:"alone",t:"独居"},{v:"with_family",t:"同居"},{v:"other",t:"その他"},{v:"unknown",t:"未確認"}];
+  const optCaregiver = [{v:"",t:"未選択"},{v:"spouse",t:"配偶者"},{v:"child",t:"子"},{v:"family",t:"同居家族"},{v:"none",t:"不在"},{v:"unknown",t:"未確認"},{v:"other",t:"その他"}];
+  const optFreq = [{v:"",t:"未選択"},{v:"daily",t:"毎日"},{v:"few_per_week",t:"週数回"},{v:"monthly",t:"月数回"},{v:"none",t:"ほぼなし"},{v:"unknown",t:"未確認"}];
+  const optWish = [{v:"",t:"未選択"},{v:"home",t:"自宅希望"},{v:"facility",t:"施設希望"},{v:"undecided",t:"未定"},{v:"anxious",t:"不安強い"},{v:"other",t:"その他"}];
+  const optHousing = [{v:"",t:"未選択"},{v:"house",t:"戸建"},{v:"apartment",t:"集合住宅"},{v:"unknown",t:"未確認"}];
+  const optYesNo = [{v:"",t:"未選択"},{v:"yes",t:"あり"},{v:"no",t:"なし"},{v:"unknown",t:"未確認"}];
+  const optBedroom = [{v:"",t:"未選択"},{v:"1f",t:"1F"},{v:"2f",t:"2F"},{v:"undecided",t:"未定"},{v:"unknown",t:"未確認"}];
+  const optToilet = [{v:"",t:"未選択"},{v:"same",t:"同階"},{v:"other",t:"別階"},{v:"unknown",t:"未確認"}];
+  const optEntrance = [{v:"",t:"未選択"},{v:"high",t:"あり（大きめ）"},{v:"low",t:"少なめ"},{v:"unknown",t:"未確認"}];
+  const optLTC = [{v:"",t:"未選択"},{v:"none",t:"未申請"},{v:"applying",t:"申請中"},{v:"certified",t:"認定あり"},{v:"unknown",t:"未確認"}];
+  const optOutpt = [{v:"",t:"未選択"},{v:"possible",t:"可能"},{v:"difficult",t:"困難"},{v:"unknown",t:"未確認"}];
+
+  const bathroomItems = [
+    {id:"bath_high_step", label:"浴槽跨ぎが高い"},
+    {id:"bath_no_handrail", label:"手すりなし"},
+    {id:"bath_narrow", label:"狭い"},
+    {id:"bath_unknown", label:"未確認"}
+  ];
+  const deviceItems = [
+    {id:"dev_cane", label:"杖"},
+    {id:"dev_walker", label:"歩行器"},
+    {id:"dev_wheelchair", label:"車椅子"},
+    {id:"dev_handrail", label:"手すり"},
+    {id:"dev_shower_chair", label:"シャワーチェア"},
+    {id:"dev_raised_toilet", label:"補高便座"},
+    {id:"dev_bed", label:"介護ベッド"},
+    {id:"dev_none", label:"なし"},
+    {id:"dev_unknown", label:"未確認"}
+  ];
+  const serviceItems = [
+    {id:"svc_home_nursing", label:"訪看"},
+    {id:"svc_home_rehab", label:"訪リハ"},
+    {id:"svc_day_service", label:"デイ"},
+    {id:"svc_helper", label:"ヘルパー"},
+    {id:"svc_meal", label:"配食"},
+    {id:"svc_none", label:"なし"},
+    {id:"svc_unknown", label:"未確認"}
+  ];
+
+  // Bed select
+  const bedOptions = [
+    {v:"", t:"未選択"},
+    {v:"自立", t:"自立"},
+    {v:"支持物で可", t:"支持物で可"},
+    {v:"見守り", t:"見守り"},
+    {v:"一部介助", t:"一部介助"},
+    {v:"全介助", t:"全介助"},
+    {v:"不可", t:"不可"}
+  ];
+  function fillBedSelect(id){
+    const el = $(id);
+    el.innerHTML = "";
+    bedOptions.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v; opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
+
+  // FIM options
   const fimOptions = [
     {v:"",  t:"未選択"},
     {v:"7", t:"7 完全自立"},
@@ -177,134 +756,951 @@
     {v:"2", t:"2 最大介助"},
     {v:"1", t:"1 全介助"}
   ];
-
-  function fillFimSelect(id){
-    const el = document.getElementById(id);
+  function fillFimSelect(el){
     el.innerHTML = "";
     fimOptions.forEach(o=>{
       const opt = document.createElement("option");
-      opt.value = o.v;
-      opt.textContent = o.t;
+      opt.value = o.v; opt.textContent = o.t;
       el.appendChild(opt);
     });
   }
 
-  function yyyymmdd(dateStr){
-    if(!dateStr) return "";
-    const d = new Date(dateStr);
-    if(Number.isNaN(d.getTime())) return "";
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const da = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${da}`;
-  }
+  // FIM items
+  const fimMotorItems = [
+    {id:"eating", label:"食事"},
+    {id:"grooming", label:"整容"},
+    {id:"bathing", label:"清拭/入浴"},
+    {id:"dressing_upper", label:"更衣（上）"},
+    {id:"dressing_lower", label:"更衣（下）"},
+    {id:"toileting", label:"トイレ動作"},
+    {id:"bladder", label:"排尿管理"},
+    {id:"bowel", label:"排便管理"},
+    {id:"transfer_bed", label:"移乗（ベッド）"},
+    {id:"transfer_toilet", label:"移乗（トイレ）"},
+    {id:"transfer_tub", label:"移乗（浴槽/シャワーチェア）"},
+    {id:"locomotion", label:"移動（歩行/車椅子）"},
+    {id:"stairs", label:"階段"}
+  ];
+  const fimCogItems = [
+    {id:"comprehension", label:"理解"},
+    {id:"expression", label:"表出"},
+    {id:"social", label:"社会的交流"},
+    {id:"problem_solving", label:"問題解決"},
+    {id:"memory", label:"記憶"}
+  ];
 
-  function locomotionModeLabel(v){
-    if(v==="walk") return "歩行";
-    if(v==="wheelchair") return "車椅子";
-    if(v==="unknown") return "未確認";
-    return "未選択";
-  }
+  // Motor linking options (your spec)
+  const neededOptions = [
+    {key:"watch_safety", label:"見守り（安全）"},
+    {key:"watch_sequence", label:"見守り（手順）"},
+    {key:"prep", label:"準備"},
+    {key:"handrail", label:"支持物"},
+    {key:"device", label:"補助具（下で選択）"},
+    {key:"time", label:"時間増大"},
+    {key:"fatigue", label:"疲労で低下"}
+  ];
+  const deviceSubOptions = [
+    {key:"cane", label:"杖"},
+    {key:"walker", label:"歩行器"},
+    {key:"cruising", label:"伝い歩き"},
+    {key:"rollator", label:"シルバーカー"},
+    {key:"other", label:"その他"}
+  ];
 
-  function safeText(s){ return (s ?? "").toString().trim(); }
+  // Patient data only (NOT stored)
+  const fimNeededMap = {};
+  const fimDeviceMap = {};
+  const fimDeviceOtherText = {};
 
-  function buildSummary(){
-    const caseId = safeText(document.getElementById("case_id").value);
-    if(!caseId){
-      alert("ケースID（必須）を入力してください。");
-      document.getElementById("case_id").focus();
-      return "";
+  function makeMotorBlock(item){
+    const keyBase = `motor_${item.id}`;
+    fimNeededMap[keyBase] = fimNeededMap[keyBase] || new Set();
+    fimDeviceMap[keyBase] = fimDeviceMap[keyBase] || new Set();
+    fimDeviceOtherText[keyBase] = fimDeviceOtherText[keyBase] || "";
+
+    const div = document.createElement("div");
+    div.className = "fim-item";
+
+    const head = document.createElement("div");
+    head.className = "fim-head";
+
+    const title = document.createElement("div");
+    title.className = "fim-title";
+    title.textContent = item.label;
+
+    const scoreSel = document.createElement("select");
+    scoreSel.id = `fim_${keyBase}`;
+    fillFimSelect(scoreSel);
+    scoreSel.addEventListener("change", updateFimTotals);
+
+    head.appendChild(title);
+    head.appendChild(scoreSel);
+
+    const row = document.createElement("div");
+    row.className = "fim-row";
+
+    if(item.id === "locomotion"){
+      const modeBox = document.createElement("div");
+      const lab = document.createElement("label");
+      lab.textContent = "移動の方法";
+      const sel = document.createElement("select");
+      sel.id = "locomotion_mode";
+      sel.innerHTML = `
+        <option value="">未選択</option>
+        <option value="walk">歩行</option>
+        <option value="wheelchair">車椅子</option>
+        <option value="unknown">未確認</option>`;
+      modeBox.appendChild(lab);
+      modeBox.appendChild(sel);
+      row.appendChild(modeBox);
+    }else{
+      const ph = document.createElement("div");
+      ph.innerHTML = `<div class="mini">　</div>`;
+      row.appendChild(ph);
     }
-    const date = safeText(document.getElementById("date").value);
-    const memo = safeText(document.getElementById("memo_short").value);
 
-    const eating = safeText(document.getElementById("fim_eating").value);
-    const dressingLower = safeText(document.getElementById("fim_dressing_lower").value);
-    const toileting = safeText(document.getElementById("fim_toileting").value);
-    const transferBed = safeText(document.getElementById("fim_transfer_bed").value);
+    const neededWrap = document.createElement("div");
+    neededWrap.innerHTML = `<label>この項目で必要だったもの</label>`;
+    const neededLine = document.createElement("div");
+    neededLine.className = "fim-needed";
 
-    const locMode = safeText(document.getElementById("locomotion_mode").value);
-    const locModeLabel = locomotionModeLabel(locMode);
-    const locomotion = safeText(document.getElementById("fim_locomotion").value);
+    const deviceBox = document.createElement("div");
+    deviceBox.className = "subcard";
+    deviceBox.style.display = "none";
+    deviceBox.innerHTML = `<div class="mini" style="margin-bottom:6px;">補助具（複数可）</div>`;
+    const devLine = document.createElement("div");
+    devLine.className = "chkline";
 
-    const adlSupport = safeText(document.getElementById("adl_support_note").value);
+    const deviceOtherInput = document.createElement("input");
+    deviceOtherInput.type = "text";
+    deviceOtherInput.placeholder = "その他の補助具（任意）";
+    deviceOtherInput.style.marginTop = "8px";
+    deviceOtherInput.style.display = "none";
+    deviceOtherInput.addEventListener("input", ()=>{
+      fimDeviceOtherText[keyBase] = trim(deviceOtherInput.value);
+    });
 
-    const comprehension = safeText(document.getElementById("fim_comprehension").value);
-    const memory = safeText(document.getElementById("fim_memory").value);
-    const cogNote = safeText(document.getElementById("cog_note").value);
+    deviceSubOptions.forEach(d=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", ()=>{
+        if(cb.checked) fimDeviceMap[keyBase].add(d.key);
+        else fimDeviceMap[keyBase].delete(d.key);
+        deviceOtherInput.style.display = fimDeviceMap[keyBase].has("other") ? "block" : "none";
+      });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(d.label));
+      devLine.appendChild(lab);
+    });
+
+    deviceBox.appendChild(devLine);
+    deviceBox.appendChild(deviceOtherInput);
+
+    neededOptions.forEach(opt=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", ()=>{
+        if(cb.checked) fimNeededMap[keyBase].add(opt.key);
+        else fimNeededMap[keyBase].delete(opt.key);
+
+        if(opt.key === "device"){
+          deviceBox.style.display = cb.checked ? "block" : "none";
+          if(!cb.checked){
+            fimDeviceMap[keyBase] = new Set();
+            fimDeviceOtherText[keyBase] = "";
+            deviceBox.querySelectorAll("input[type=checkbox]").forEach(x=> x.checked=false);
+            deviceOtherInput.value = "";
+            deviceOtherInput.style.display = "none";
+          }
+        }
+      });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(opt.label));
+      neededLine.appendChild(lab);
+    });
+
+    neededWrap.appendChild(neededLine);
+    neededWrap.appendChild(deviceBox);
+    row.appendChild(neededWrap);
+
+    div.appendChild(head);
+    div.appendChild(row);
+    return div;
+  }
+
+  function makeCogBlock(item){
+    const div = document.createElement("div");
+    div.className = "fim-item";
+    const head = document.createElement("div");
+    head.className = "fim-head";
+    const title = document.createElement("div");
+    title.className = "fim-title";
+    title.textContent = item.label;
+
+    const scoreSel = document.createElement("select");
+    scoreSel.id = `fim_cog_${item.id}`;
+    fillFimSelect(scoreSel);
+    scoreSel.addEventListener("change", updateFimTotals);
+
+    head.appendChild(title);
+    head.appendChild(scoreSel);
+    div.appendChild(head);
+    return div;
+  }
+
+  function initFimUI(){
+    const motorWrap = $("fim_motor_wrap");
+    const cogWrap = $("fim_cog_wrap");
+    motorWrap.innerHTML = "";
+    cogWrap.innerHTML = "";
+    fimMotorItems.forEach(it=> motorWrap.appendChild(makeMotorBlock(it)));
+    fimCogItems.forEach(it=> cogWrap.appendChild(makeCogBlock(it)));
+  }
+
+  function updateFimTotals(){
+    const calc = computeFimTotals();
+    $("fim_motor").textContent = String(calc.motorSum);
+    $("fim_cog").textContent = String(calc.cogSum);
+    $("fim_total").textContent = String(calc.totalSum);
+    $("fim_count").textContent = String(calc.count);
+  }
+
+  // ====== B: FIMを要約生成時も必ず再計算 ======
+  function computeFimTotals(){
+    let motorSum=0, cogSum=0, count=0;
+
+    fimMotorItems.forEach(it=>{
+      const v = $(`fim_motor_${it.id}`)?.value || "";
+      const n = Number(v);
+      if(v && Number.isFinite(n)){ motorSum += n; count += 1; }
+    });
+    fimCogItems.forEach(it=>{
+      const v = $(`fim_cog_${it.id}`)?.value || "";
+      const n = Number(v);
+      if(v && Number.isFinite(n)){ cogSum += n; count += 1; }
+    });
+
+    return { motorSum, cogSum, totalSum: motorSum + cogSum, count };
+  }
+
+  // HDS scoring
+  function fillScoreSelect(id, max){
+    const el = $(id);
+    el.innerHTML = "";
+    for(let i=0;i<=max;i++){
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = String(i);
+      el.appendChild(opt);
+    }
+    el.value = "0";
+    el.addEventListener("change", updateHdsTotal);
+  }
+  function q9ToScore(n){
+    if(!Number.isFinite(n) || n < 0) return 0;
+    if(n <= 5) return 0;
+    if(n === 6) return 1;
+    if(n === 7) return 2;
+    if(n === 8) return 3;
+    if(n === 9) return 4;
+    return 5;
+  }
+  function updateHdsTotal(){
+    const s = computeHdsBreakdown();
+    $("hds_total").textContent = String(s.total);
+    $("hds_total_top").textContent = String(s.total);
+  }
+  function initHds(){
+    fillScoreSelect("hds_q1", 1);
+    fillScoreSelect("hds_q2_y", 1);
+    fillScoreSelect("hds_q2_m", 1);
+    fillScoreSelect("hds_q2_d", 1);
+    fillScoreSelect("hds_q2_w", 1);
+    fillScoreSelect("hds_q3", 2);
+    fillScoreSelect("hds_q4_a", 1);
+    fillScoreSelect("hds_q4_b", 1);
+    fillScoreSelect("hds_q4_c", 1);
+    fillScoreSelect("hds_q5_1", 1);
+    fillScoreSelect("hds_q5_2", 1);
+    fillScoreSelect("hds_q6_1", 1);
+    fillScoreSelect("hds_q6_2", 1);
+    fillScoreSelect("hds_q7_a", 2);
+    fillScoreSelect("hds_q7_b", 2);
+    fillScoreSelect("hds_q7_c", 2);
+    fillScoreSelect("hds_q8", 5);
+
+    $("hds_q9_count").addEventListener("input", ()=>{
+      const n = Number($("hds_q9_count").value);
+      $("hds_q9_score").textContent = String(q9ToScore(n));
+      updateHdsTotal();
+    });
+    updateHdsTotal();
+  }
+
+  // ====== HDS項目別（Q1〜Q9）を要約に出せるように計算 ======
+  function numVal(id, fallback="0"){
+    const v = $(id)?.value;
+    const n = Number(v ?? fallback);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function computeHdsBreakdown(){
+    const q1 = numVal("hds_q1");
+
+    const q2_y = numVal("hds_q2_y");
+    const q2_m = numVal("hds_q2_m");
+    const q2_d = numVal("hds_q2_d");
+    const q2_w = numVal("hds_q2_w");
+    const q2 = q2_y + q2_m + q2_d + q2_w;
+
+    const q3 = numVal("hds_q3");
+
+    const q4_a = numVal("hds_q4_a");
+    const q4_b = numVal("hds_q4_b");
+    const q4_c = numVal("hds_q4_c");
+    const q4 = q4_a + q4_b + q4_c;
+
+    const q5_1 = numVal("hds_q5_1");
+    const q5_2 = numVal("hds_q5_2");
+    const q5 = q5_1 + q5_2;
+
+    const q6_1 = numVal("hds_q6_1");
+    const q6_2 = numVal("hds_q6_2");
+    const q6 = q6_1 + q6_2;
+
+    const q7_a = numVal("hds_q7_a");
+    const q7_b = numVal("hds_q7_b");
+    const q7_c = numVal("hds_q7_c");
+    const q7 = q7_a + q7_b + q7_c;
+
+    const q8 = numVal("hds_q8");
+
+    const q9 = Number($("hds_q9_score")?.textContent || "0") || 0;
+
+    const total = q1 + q2 + q3 + q4 + q5 + q6 + q7 + q8 + q9;
+
+    return {
+      q1,
+      q2: { total: q2, y:q2_y, m:q2_m, d:q2_d, w:q2_w },
+      q3,
+      q4: { total: q4, a:q4_a, b:q4_b, c:q4_c },
+      q5: { total: q5, a:q5_1, b:q5_2 },
+      q6: { total: q6, a:q6_1, b:q6_2 },
+      q7: { total: q7, a:q7_a, b:q7_b, c:q7_c },
+      q8,
+      q9,
+      total
+    };
+  }
+
+  // Motor needed labels with device detail
+  function neededLabelsForMotor(id){
+    const keyBase = `motor_${id}`;
+    const set = fimNeededMap[keyBase] || new Set();
+    const labels = [];
+
+    for(const k of set){
+      const found = neededOptions.find(x=>x.key===k);
+      if(!found) continue;
+
+      if(k !== "device"){
+        labels.push(found.label);
+      }else{
+        const devSet = fimDeviceMap[keyBase] || new Set();
+        const devLabels = [];
+        for(const dk of devSet){
+          const d = deviceSubOptions.find(x=>x.key===dk);
+          if(d) devLabels.push(d.label);
+        }
+        const otherText = (devSet.has("other") && fimDeviceOtherText[keyBase]) ? fimDeviceOtherText[keyBase] : "";
+        let devStr = devLabels.length ? devLabels.join("／") : "-";
+        if(otherText) devStr += `（その他:${otherText}）`;
+        labels.push(`補助具:${devStr}`);
+      }
+    }
+    return labels;
+  }
+
+  // ===== Custom fields (config only) =====
+  function loadConfig(){
+    const raw = localStorage.getItem(CONFIG_KEY);
+    if(!raw) return { customFields: [] };
+    try{
+      const cfg = JSON.parse(raw);
+      cfg.customFields = Array.isArray(cfg.customFields) ? cfg.customFields : [];
+      return cfg;
+    }catch(e){
+      return { customFields: [] };
+    }
+  }
+  function saveConfig(cfg){ localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+  function resetConfig(){ localStorage.removeItem(CONFIG_KEY); }
+  let CONFIG = loadConfig();
+
+  function newId(){ return "cf_" + Math.random().toString(36).slice(2,10); }
+  function escapeHtml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  function renderCustomList(){
+    const list = $("custom_list");
+    list.innerHTML = "";
+
+    if(!CONFIG.customFields.length){
+      const p = document.createElement("div");
+      p.className = "hint";
+      p.textContent = "まだカスタム項目はありません。上の入力で追加できます。";
+      list.appendChild(p);
+      $("custom_values_form").innerHTML = "";
+      return;
+    }
+
+    CONFIG.customFields.forEach((f, i)=>{
+      const row = document.createElement("div");
+      row.className = "card";
+      row.style.marginBottom = "10px";
+      row.style.boxShadow = "none";
+      row.style.background = "color-mix(in srgb, var(--chip) 75%, transparent)";
+
+      const top = document.createElement("div");
+      top.style.display = "flex";
+      top.style.justifyContent = "space-between";
+      top.style.alignItems = "center";
+      top.style.gap = "10px";
+      top.style.flexWrap = "wrap";
+
+      const left = document.createElement("div");
+      left.innerHTML = `<strong>${escapeHtml(f.label)}</strong> <span class="badge">${f.type}</span>`;
+
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.gap = "8px";
+      right.style.flexWrap = "wrap";
+
+      const up = document.createElement("button");
+      up.className = "btn";
+      up.textContent = "↑";
+      up.disabled = (i===0);
+      up.addEventListener("click", ()=>{
+        const tmp = CONFIG.customFields[i-1];
+        CONFIG.customFields[i-1] = CONFIG.customFields[i];
+        CONFIG.customFields[i] = tmp;
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      const down = document.createElement("button");
+      down.className = "btn";
+      down.textContent = "↓";
+      down.disabled = (i===CONFIG.customFields.length-1);
+      down.addEventListener("click", ()=>{
+        const tmp = CONFIG.customFields[i+1];
+        CONFIG.customFields[i+1] = CONFIG.customFields[i];
+        CONFIG.customFields[i] = tmp;
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      const del = document.createElement("button");
+      del.className = "btn danger";
+      del.textContent = "削除";
+      del.addEventListener("click", ()=>{
+        if(!confirm(`「${f.label}」を削除しますか？`)) return;
+        CONFIG.customFields = CONFIG.customFields.filter(x=>x.id!==f.id);
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      right.appendChild(up);
+      right.appendChild(down);
+      right.appendChild(del);
+
+      top.appendChild(left);
+      top.appendChild(right);
+
+      const detail = document.createElement("div");
+      detail.className = "hint";
+      detail.textContent = (f.type==="select" || f.type==="multiselect")
+        ? `選択肢：${(f.options||[]).join(" / ")}`
+        : "自由入力";
+
+      row.appendChild(top);
+      row.appendChild(detail);
+      list.appendChild(row);
+    });
+
+    renderCustomForm();
+  }
+
+  function renderCustomForm(){
+    const form = $("custom_values_form");
+    form.innerHTML = "";
+    if(!CONFIG.customFields.length) return;
+
+    const title = document.createElement("div");
+    title.className = "score";
+    title.innerHTML = `カスタム項目の入力（患者データ：保存されません） <span class="badge">任意</span>`;
+    form.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "grid two";
+    grid.style.marginTop = "10px";
+
+    CONFIG.customFields.forEach(f=>{
+      const box = document.createElement("div");
+      const lab = document.createElement("label");
+      lab.textContent = f.label;
+      box.appendChild(lab);
+
+      if(f.type==="text"){
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "val_" + f.id;
+        inp.placeholder = "任意";
+        box.appendChild(inp);
+      }else if(f.type==="textarea"){
+        const ta = document.createElement("textarea");
+        ta.id = "val_" + f.id;
+        ta.placeholder = "任意";
+        box.appendChild(ta);
+      }else if(f.type==="select"){
+        const sel = document.createElement("select");
+        sel.id = "val_" + f.id;
+        const opt0 = document.createElement("option");
+        opt0.value = ""; opt0.textContent = "未選択";
+        sel.appendChild(opt0);
+        (f.options||[]).forEach(o=>{
+          const opt = document.createElement("option");
+          opt.value = o; opt.textContent = o;
+          sel.appendChild(opt);
+        });
+        box.appendChild(sel);
+      }else if(f.type==="multiselect"){
+        const wrap = document.createElement("div");
+        wrap.className = "chkline";
+        wrap.id = "val_" + f.id;
+        (f.options||[]).forEach(o=>{
+          const lab2 = document.createElement("label");
+          lab2.className = "chk";
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.dataset.value = o;
+          lab2.appendChild(cb);
+          lab2.appendChild(document.createTextNode(o));
+          wrap.appendChild(lab2);
+        });
+        box.appendChild(wrap);
+      }
+      grid.appendChild(box);
+    });
+
+    form.appendChild(grid);
+  }
+
+  function addCustomField(){
+    const label = trim($("cf_label").value);
+    const type = $("cf_type").value;
+    const optionsRaw = trim($("cf_options").value);
+
+    if(!label){ cfgToast("項目名を入力してください。", false); return; }
+
+    let options = [];
+    if(type==="select" || type==="multiselect"){
+      options = optionsRaw.split(",").map(s=>s.trim()).filter(Boolean);
+      if(!options.length){
+        cfgToast("選択肢を「カンマ区切り」で入力してください。例）あり,なし,未確認", false);
+        return;
+      }
+    }
+
+    CONFIG.customFields.push({ id: newId(), label, type, options });
+    saveConfig(CONFIG);
+    $("cf_label").value = "";
+    $("cf_options").value = "";
+    renderCustomList();
+    cfgToast("カスタム項目を追加しました。");
+  }
+
+  function readCustomValues(){
+    const out = [];
+    CONFIG.customFields.forEach(f=>{
+      const key = f.label;
+      let val = "";
+      if(f.type==="text" || f.type==="textarea" || f.type==="select"){
+        val = trim(document.getElementById("val_"+f.id)?.value || "");
+      }else if(f.type==="multiselect"){
+        const wrap = document.getElementById("val_"+f.id);
+        if(wrap){
+          const selected = Array.from(wrap.querySelectorAll("input[type=checkbox]"))
+            .filter(cb=>cb.checked)
+            .map(cb=>cb.dataset.value);
+          val = selected.join("／");
+        }
+      }
+      if(val) out.push(`${key}：${val}`);
+    });
+    return out;
+  }
+
+  function exportConfig(){
+    const cfg = { version:"6.0", note:"患者情報は含みません（カスタム項目構成のみ）", customFields: CONFIG.customFields };
+    const blob = new Blob([JSON.stringify(cfg, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "config.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    cfgToast("config.json を書き出しました。");
+  }
+
+  function importConfigFile(file){
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const cfg = JSON.parse(reader.result);
+        cfg.customFields = Array.isArray(cfg.customFields) ? cfg.customFields : [];
+        CONFIG.customFields = cfg.customFields;
+        saveConfig(CONFIG);
+        renderCustomList();
+        cfgToast("設定を読み込みました。");
+      }catch(e){
+        cfgToast("設定の読み込みに失敗しました。", false);
+      }
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  // ===== 見やすい要約（見出し＋箇条書き） + FIM再計算 + HDS項目別 =====
+  function buildSummary(){
+    const caseId = trim($("case_id").value);
+    if(!caseId){ alert("ケースID（必須）を入力してください。"); $("case_id").focus(); return ""; }
+    const dateDisp = yyyy_mm_dd(trim($("date").value)) || "（日付未入力）";
+
+    // B: 要約生成時に必ず再計算
+    const fim = computeFimTotals();
+    const hds = computeHdsBreakdown();
+    const hdsWords = trim($("hds_q4_words").value);
 
     const lines = [];
-    lines.push(`【ケース】${caseId}／${yyyymmdd(date) || "（日付未入力）"}`);
-    lines.push(`【ADL(FIM)】食事:${eating||"-"}／更衣下:${dressingLower||"-"}／トイレ動作:${toileting||"-"}／移乗(ベッド):${transferBed||"-"}／移動(${locModeLabel}):${locomotion||"-"}`);
-    lines.push(`【認知(FIM)】理解:${comprehension||"-"}／記憶:${memory||"-"}`);
-    if(memo) lines.push(`【メモ】${memo}`);
-    if(adlSupport) lines.push(`【ADL補足】${adlSupport}`);
-    if(cogNote) lines.push(`【認知補足】${cogNote}`);
+    const add = (s)=>{ if(s && s.trim()) lines.push(s); };
+    const addH = (t)=>{ add(""); add(`■ ${t}`); };
+    const addB = (s)=>{ if(s && s.trim()) add(`・${s}`); };
+
+    add(`【初期評価 要約】`);
+    add(`ケース：${caseId}　日付：${dateDisp}`);
+    add(`FIM 合計：${fim.totalSum}（運動${fim.motorSum}／認知${fim.cogSum}）　HDS-R：${hds.total}/30`);
+    add(`※個人情報は入力しない（ケースID運用）`);
+
+    // Family
+    const family = {
+      discharge: $("discharge_plan").selectedOptions[0]?.textContent || "未選択",
+      living: $("living_status").selectedOptions[0]?.textContent || "未選択",
+      caregiver: $("main_caregiver").selectedOptions[0]?.textContent || "未選択",
+      freq: $("support_frequency").selectedOptions[0]?.textContent || "未選択",
+      wp: $("wish_patient").selectedOptions[0]?.textContent || "未選択",
+      wf: $("wish_family").selectedOptions[0]?.textContent || "未選択",
+      note: trim($("family_note").value)
+    };
+    addH("家族・同居");
+    addB(`退院先：${family.discharge}`);
+    addB(`同居：${family.living}／主介護者：${family.caregiver}／支援頻度：${family.freq}`);
+    addB(`本人希望：${family.wp}／家族希望：${family.wf}`);
+    if(family.note) addB(`補足：${family.note}`);
+
+    // Environment
+    const env = {
+      housing: $("housing_type").selectedOptions[0]?.textContent || "未選択",
+      stairs: $("stairs").selectedOptions[0]?.textContent || "未選択",
+      bedroom: $("bedroom_floor").selectedOptions[0]?.textContent || "未選択",
+      toilet: $("toilet_floor").selectedOptions[0]?.textContent || "未選択",
+      entrance: $("entrance_step").selectedOptions[0]?.textContent || "未選択",
+      bath: readCheckLabelsFromContainer("bathroom_checks").join("／"),
+      dev: readCheckLabelsFromContainer("device_checks").join("／"),
+      note: trim($("env_note").value)
+    };
+    addH("住環境");
+    addB(`住宅：${env.housing}`);
+    addB(`階段：${env.stairs}／寝室：${env.bedroom}／トイレ：${env.toilet}／玄関：${env.entrance}`);
+    if(env.bath) addB(`浴室：${env.bath}`);
+    if(env.dev)  addB(`福祉用具・環境：${env.dev}`);
+    if(env.note) addB(`補足：${env.note}`);
+
+    // Support
+    const support = {
+      ltc: $("ltc_insurance").selectedOptions[0]?.textContent || "未選択",
+      services: readCheckLabelsFromContainer("services_checks").join("／"),
+      outpt: $("outpatient_support").selectedOptions[0]?.textContent || "未選択",
+      note: trim($("support_note").value)
+    };
+    addH("支援資源");
+    addB(`介護保険：${support.ltc}`);
+    if(support.services) addB(`利用サービス：${support.services}`);
+    addB(`通院支援：${support.outpt}`);
+    if(support.note) addB(`補足：${support.note}`);
+
+    // Bed mobility
+    const bed = {
+      roll: trim($("bed_roll").value) || "未選択",
+      situp: trim($("bed_situp").value) || "未選択",
+      sitting: trim($("bed_sitting").value) || "未選択",
+      standup: trim($("bed_standup").value) || "未選択"
+    };
+    addH("起居動作");
+    addB(`寝返り：${bed.roll}`);
+    addB(`起き上がり：${bed.situp}`);
+    addB(`座位保持：${bed.sitting}`);
+    addB(`立ち上がり：${bed.standup}`);
+
+    // Neuro
+    const neuro = (function(){
+      const paral = [];
+      if($("paral_ue_l").checked) paral.push("上肢左");
+      if($("paral_ue_r").checked) paral.push("上肢右");
+      if($("paral_le_l").checked) paral.push("下肢左");
+      if($("paral_le_r").checked) paral.push("下肢右");
+
+      const rom = [];
+      if($("rom_ue_l").checked) rom.push("上肢左");
+      if($("rom_ue_r").checked) rom.push("上肢右");
+      if($("rom_le_l").checked) rom.push("下肢左");
+      if($("rom_le_r").checked) rom.push("下肢右");
+
+      const sens = [];
+      if($("sens_ue_l").checked) sens.push("上肢左");
+      if($("sens_ue_r").checked) sens.push("上肢右");
+      if($("sens_le_l").checked) sens.push("下肢左");
+      if($("sens_le_r").checked) sens.push("下肢右");
+      if($("sens_other").checked) sens.push("その他");
+
+      return {
+        paral,
+        rom,
+        sens,
+        sensOther: trim($("sens_other_note").value),
+        pain: trim($("pain_yes").value),
+        painSite: trim($("pain_site").value)
+      };
+    })();
+
+    addH("身体所見");
+    if(neuro.paral.length) addB(`麻痺：${neuro.paral.join("・")}`);
+    if(neuro.rom.length) addB(`ROM制限：${neuro.rom.join("・")}`);
+    if(neuro.sens.length) addB(`感覚障害：${neuro.sens.join("・")}${neuro.sensOther ? `（${neuro.sensOther}）` : ""}`);
+    if(neuro.pain) addB(`疼痛：${neuro.pain}${neuro.painSite ? `（部位：${neuro.painSite}）` : ""}`);
+    if(!neuro.paral.length && !neuro.rom.length && !neuro.sens.length && !neuro.pain) addB("（未入力）");
+
+    // HDS-R breakdown
+    addH("HDS-R（項目別）");
+    addB(`Q1 年齢：${hds.q1}/1`);
+    addB(`Q2 日付：${hds.q2.total}/4（年${hds.q2.y}／月${hds.q2.m}／日${hds.q2.d}／曜${hds.q2.w}）`);
+    addB(`Q3 場所：${hds.q3}/2`);
+    addB(`Q4 直後再生：${hds.q4.total}/3（1:${hds.q4.a} 2:${hds.q4.b} 3:${hds.q4.c}）`);
+    addB(`Q5 計算：${hds.q5.total}/2（93:${hds.q5.a}／86:${hds.q5.b}）`);
+    addB(`Q6 逆唱：${hds.q6.total}/2（3桁:${hds.q6.a}／4桁:${hds.q6.b}）`);
+    addB(`Q7 遅延再生：${hds.q7.total}/6（1:${hds.q7.a} 2:${hds.q7.b} 3:${hds.q7.c}）`);
+    addB(`Q8 物品再生：${hds.q8}/5`);
+    addB(`Q9 野菜：${hds.q9}/5`);
+    addB(`合計：${hds.total}/30`);
+    if(hdsWords) addB(`採用語：${hdsWords}`);
+
+    // FIM Motor (with linking)
+    const mode = $("locomotion_mode")?.value || "";
+    const modeLabel = (mode==="walk")?"歩行":(mode==="wheelchair")?"車椅子":(mode==="unknown")?"未確認":"未選択";
+
+    addH("FIM（運動）");
+    let motorAny = false;
+    fimMotorItems.forEach(it=>{
+      const score = $(`fim_motor_${it.id}`)?.value || "";
+      const need = neededLabelsForMotor(it.id) || [];
+      const hasScore = !!score;
+      const hasNeed = need.length > 0;
+      if(!hasScore && !hasNeed) return;
+
+      motorAny = true;
+      const label = (it.id==="locomotion") ? `移動（${modeLabel}）` : it.label;
+      const scoreText = hasScore ? `：${score}` : "";
+      const needText = hasNeed ? `　必要：${need.join("／")}` : "";
+      addB(`${label}${scoreText}${needText}`);
+    });
+    const adlNote = trim($("adl_note").value);
+    if(adlNote) addB(`補足：${adlNote}`);
+    if(!motorAny && !adlNote) addB("（未入力）");
+
+    // FIM Cognition (no linking)
+    addH("FIM（認知）");
+    let cogAny = false;
+    fimCogItems.forEach(it=>{
+      const score = $(`fim_cog_${it.id}`)?.value || "";
+      if(!score) return;
+      cogAny = true;
+      addB(`${it.label}：${score}`);
+    });
+    const cogNote = trim($("cog_note").value);
+    if(cogNote) addB(`補足：${cogNote}`);
+    if(!cogAny && !cogNote) addB("（未入力）");
+
+    // Custom
+    const customVals = readCustomValues();
+    if(customVals.length){
+      addH("カスタム");
+      customVals.forEach(v=> addB(v));
+    }
+
+    // Memo
+    const noteGeneral = trim($("note_general").value);
+    if(noteGeneral){
+      addH("メモ");
+      addB(noteGeneral);
+    }
 
     return lines.join("\n");
   }
 
-  function clearAll(){
-    const ids = [
-      "case_id","memo_short","fim_eating","fim_dressing_lower","fim_toileting","fim_transfer_bed",
-      "locomotion_mode","fim_locomotion","adl_support_note","fim_comprehension","fim_memory","cog_note"
-    ];
-    ids.forEach(id=>{
-      const el = document.getElementById(id);
-      if(!el) return;
-      if(el.tagName === "SELECT") el.value = "";
-      else el.value = "";
-    });
-    document.getElementById("output").value = "";
-    document.getElementById("copy_status").textContent = "";
-    // Date resets to today
-    document.getElementById("date").valueAsDate = new Date();
-  }
-
   async function copyOutput(){
-    const text = document.getElementById("output").value;
-    if(!text){
-      document.getElementById("copy_status").textContent = "先に「要約を生成」してください。";
-      return;
-    }
+    const text = $("output").value;
+    if(!text){ toast("先に「要約を生成」してください。", false); return; }
     try{
       await navigator.clipboard.writeText(text);
-      document.getElementById("copy_status").innerHTML = `<span class="ok">コピーしました。</span>`;
+      toast("コピーしました。");
     }catch(e){
-      // Fallback
-      const out = document.getElementById("output");
-      out.focus();
-      out.select();
+      $("output").focus(); $("output").select();
       document.execCommand("copy");
-      document.getElementById("copy_status").innerHTML = `<span class="ok">コピーしました（互換モード）。</span>`;
+      toast("コピーしました（互換モード）。");
     }
   }
 
-  // init
-  ["fim_eating","fim_dressing_lower","fim_toileting","fim_transfer_bed","fim_locomotion","fim_comprehension","fim_memory"]
-    .forEach(fillFimSelect);
+  function mailtoOpen(){
+    const to = getMailTo();
+    if(!to){ toast("送信先メールが未設定です。先に『宛先を保存』してください。", false); $("mail_to").focus(); return; }
+    const text = $("output").value || buildSummary();
+    if(!text) return;
+    $("output").value = text;
+    const subj = `${trim($("case_id").value)}_初期評価_${yyyymmdd(trim($("date").value)) || "DATE"}`;
+    const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(text)}`;
+    window.location.href = url;
+  }
 
-  document.getElementById("date").valueAsDate = new Date();
+  function clearAllPatientInputs(){
+    ["case_id","note_general","family_note","env_note","support_note","sens_other_note","pain_site","adl_note","cog_note","hds_q4_words","hds_q9_count"]
+      .forEach(id=>{ const el=$(id); if(el) el.value=""; });
 
-  document.getElementById("btn_generate").addEventListener("click", ()=>{
-    const summary = buildSummary();
-    if(summary){
-      document.getElementById("output").value = summary;
-      document.getElementById("copy_status").textContent = "";
-    }
-  });
+    ["discharge_plan","living_status","main_caregiver","support_frequency","wish_patient","wish_family",
+     "housing_type","stairs","bedroom_floor","toilet_floor","entrance_step",
+     "ltc_insurance","outpatient_support","bed_roll","bed_situp","bed_sitting","bed_standup","pain_yes",
+     "hds_q1","hds_q2_y","hds_q2_m","hds_q2_d","hds_q2_w","hds_q3","hds_q4_a","hds_q4_b","hds_q4_c",
+     "hds_q5_1","hds_q5_2","hds_q6_1","hds_q6_2","hds_q7_a","hds_q7_b","hds_q7_c","hds_q8"]
+      .forEach(id=>{ const el=$(id); if(el) el.value="0"; });
 
-  document.getElementById("btn_copy").addEventListener("click", copyOutput);
-  document.getElementById("btn_clear").addEventListener("click", ()=>{
-    if(confirm("入力をクリアします。よろしいですか？")){
-      clearAll();
-    }
-  });
+    [...bathroomItems, ...deviceItems, ...serviceItems].forEach(it=>{ const el=$(it.id); if(el) el.checked=false; });
+    ["paral_ue_l","paral_ue_r","paral_le_l","paral_le_r","rom_ue_l","rom_ue_r","rom_le_l","rom_le_r",
+     "sens_ue_l","sens_ue_r","sens_le_l","sens_le_r","sens_other"].forEach(id=>{ const el=$(id); if(el) el.checked=false; });
 
-  // Best-effort cleanup on page hide (not a perfect guarantee, but helps)
-  window.addEventListener("pagehide", ()=> {
-    try { clearAll(); } catch(_) {}
-  });
+    fimMotorItems.forEach(it=>{
+      const sel = $(`fim_motor_${it.id}`);
+      if(sel) sel.value="";
+      fimNeededMap[`motor_${it.id}`]=new Set();
+      fimDeviceMap[`motor_${it.id}`]=new Set();
+      fimDeviceOtherText[`motor_${it.id}`]="";
+    });
+    fimCogItems.forEach(it=>{
+      const sel = $(`fim_cog_${it.id}`);
+      if(sel) sel.value="";
+    });
+
+    document.querySelectorAll(".fim-needed input[type=checkbox]").forEach(cb=> cb.checked=false);
+    document.querySelectorAll(".subcard input[type=checkbox]").forEach(cb=> cb.checked=false);
+    document.querySelectorAll(".subcard input[type=text]").forEach(inp=>{ inp.value=""; inp.style.display="none"; });
+
+    $("hds_q9_score").textContent = "0";
+    $("output").value="";
+    setToday();
+    updateFimTotals();
+    updateHdsTotal();
+    toast("入力をクリアしました。");
+  }
+
+  function initStaticUI(){
+    fillSelect("discharge_plan", optDischarge);
+    fillSelect("living_status", optLiving);
+    fillSelect("main_caregiver", optCaregiver);
+    fillSelect("support_frequency", optFreq);
+    fillSelect("wish_patient", optWish);
+    fillSelect("wish_family", optWish);
+
+    fillSelect("housing_type", optHousing);
+    fillSelect("stairs", optYesNo);
+    fillSelect("bedroom_floor", optBedroom);
+    fillSelect("toilet_floor", optToilet);
+    fillSelect("entrance_step", optEntrance);
+
+    fillSelect("ltc_insurance", optLTC);
+    fillSelect("outpatient_support", optOutpt);
+
+    makeChecks("bathroom_checks", bathroomItems);
+    makeChecks("device_checks", deviceItems);
+    makeChecks("services_checks", serviceItems);
+
+    ["bed_roll","bed_situp","bed_sitting","bed_standup"].forEach(fillBedSelect);
+
+    initFimUI();
+    setToday();
+  }
+
+  function bindEvents(){
+    $("btn_generate").addEventListener("click", ()=>{
+      const s = buildSummary();
+      if(s){ $("output").value = s; toast("要約を生成しました。"); }
+    });
+    $("btn_copy").addEventListener("click", copyOutput);
+    $("btn_mail").addEventListener("click", mailtoOpen);
+    $("btn_clear").addEventListener("click", ()=>{
+      if(confirm("入力（患者データ）をクリアします。よろしいですか？")) clearAllPatientInputs();
+    });
+
+    $("btn_cf_add").addEventListener("click", addCustomField);
+    $("btn_cf_clear").addEventListener("click", ()=>{
+      $("cf_label").value=""; $("cf_options").value=""; $("cf_type").value="text";
+    });
+
+    $("btn_export").addEventListener("click", exportConfig);
+    $("btn_import").addEventListener("click", ()=> $("file_input").click());
+    $("file_input").addEventListener("change", (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(f) importConfigFile(f);
+      e.target.value = "";
+    });
+
+    $("btn_config_reset").addEventListener("click", ()=>{
+      if(!confirm("設定（カスタム項目）を初期化します。よろしいですか？")) return;
+      resetConfig();
+      CONFIG = loadConfig();
+      renderCustomList();
+      cfgToast("設定を初期化しました。");
+    });
+
+    window.addEventListener("pagehide", ()=>{ try{ clearAllPatientInputs(); }catch(_){} });
+  }
+
+  // Boot
+  (function boot(){
+    initTheme();
+    initMailSetting();
+    initStaticUI();
+    initHds();
+    renderCustomList();
+    bindEvents();
+    updateFimTotals();
+    updateHdsTotal();
+  })();
 </script>
 </body>
 </html>
