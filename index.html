@@ -1,1767 +1,1967 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>初期評価フォーム（Pro フル）</title>
   <style>
-    :root{
-      --bg:#f7f7fb;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent2:#0ea5e9;
-      --danger:#dc2626;
-      --ok:#16a34a;
-      --shadow: 0 8px 24px rgba(0,0,0,.06);
-      --radius: 14px;
-      --gap: 12px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    :root{ --radius:16px; --gap:12px; }
+    html[data-theme="light"]{
+      --page:#f6f7fb; --page2:#eef2ff; --card:#ffffff; --border:#e5e7eb;
+      --text:#0f172a; --muted:#64748b; --accent:#2563eb; --accent2:#0ea5e9;
+      --danger:#ef4444; --ok:#16a34a; --shadow: 0 10px 30px rgba(15,23,42,.10);
+      --chip:#f1f5f9; --input:#ffffff; --tablehead:#f8fafc;
     }
-    [data-theme="dark"]{
-      --bg:#0b1220;
-      --card:#0f1a2b;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --border:#22304a;
-      --accent:#60a5fa;
-      --accent2:#22d3ee;
-      --danger:#f87171;
-      --ok:#34d399;
-      --shadow: 0 8px 24px rgba(0,0,0,.35);
+    html[data-theme="dark"]{
+      --page:#0b1220; --page2:#0b3b6b; --card: rgba(15,23,42,.78); --border: rgba(255,255,255,.12);
+      --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent2:#0ea5e9;
+      --danger:#fb7185; --ok:#22c55e; --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --chip: rgba(2,6,23,.35); --input: rgba(2,6,23,.35); --tablehead: rgba(2,6,23,.25);
     }
-    *{ box-sizing:border-box; }
+
+    *{box-sizing:border-box}
     body{
-      margin:0;
-      font-family:var(--sans);
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.45;
+      margin:0; color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;
+      background:
+        radial-gradient(900px 600px at 15% 10%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+        linear-gradient(180deg, var(--page), var(--page2));
+      min-height:100vh;
     }
-    a{ color:var(--accent); }
-    .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 12px 12px 84px;
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(8px);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+      border-bottom:1px solid var(--border);
     }
-    .sticky{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: color-mix(in srgb, var(--bg) 92%, transparent);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topbar{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 10px 12px;
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-    .top-left{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width: 0;
-    }
-    .brand{
-      font-weight:800;
-      letter-spacing:.2px;
-      font-size: 14px;
-      color: var(--muted);
-    }
-    .kpi{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      font-size: 13px;
-      color: var(--muted);
-    }
+    .wrap{max-width:1120px; margin:0 auto; padding:14px 16px;}
+    h1{margin:0; font-size:16px}
+    .sub{font-size:12px; color:var(--muted); line-height:1.55; margin-top:6px}
     .pill{
-      border:1px solid var(--border);
-      background: var(--card);
-      padding: 6px 10px;
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      max-width: 100%;
+      display:inline-block; margin-left:8px; font-size:12px; padding:2px 10px;
+      border:1px solid var(--border); border-radius:999px; background: var(--chip);
     }
-    .pill b{ color: var(--text); }
-    .top-right{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      justify-content:flex-end;
-      align-items:center;
-    }
+    .topbar{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+    .topbtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
     .btn{
-      border:1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      font-weight: 700;
-      font-size: 13px;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
+      border:1px solid var(--border); background: var(--chip); color: var(--text);
+      padding:8px 10px; border-radius: 12px; cursor:pointer; font-size:13px;
     }
-    .btn:active{ transform: translateY(1px); }
     .btn.primary{
-      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-      background: color-mix(in srgb, var(--accent) 14%, var(--card));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, #fff), var(--accent2));
+      color:#06213a; font-weight:800;
+      border-color: color-mix(in srgb, var(--accent2) 35%, var(--border));
     }
-    .btn.danger{
-      border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
-      background: color-mix(in srgb, var(--danger) 12%, var(--card));
-    }
-    .btn.small{ padding: 8px 10px; border-radius: 10px; font-size: 12px; }
-    .grid{
-      display:grid;
-      gap: var(--gap);
-    }
-    @media (min-width: 860px){
-      .grid.two{ grid-template-columns: 1fr 1fr; }
-      .grid.three{ grid-template-columns: 1fr 1fr 1fr; }
-    }
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 40%, var(--border));}
+    .btn.ok{border-color: color-mix(in srgb, var(--ok) 40%, var(--border));}
+
+    main{max-width:1120px; margin:0 auto; padding:16px;}
     .card{
       background: var(--card);
       border:1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 12px;
+      padding:14px;
+      margin-bottom:14px;
     }
-    h2{
-      margin: 0 0 10px;
-      font-size: 16px;
+    .card h2{
+      margin:0 0 10px; font-size:14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
     }
-    h3{
-      margin: 10px 0 8px;
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 800;
-      letter-spacing:.2px;
-    }
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-      flex-wrap:wrap;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      flex: 1 1 180px;
-      min-width: 150px;
-    }
-    label{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-    input, select, textarea{
+    .hint{font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px}
+    .grid{display:grid; grid-template-columns:1fr; gap: var(--gap);}
+    @media (min-width: 920px){ .grid.two{grid-template-columns:1fr 1fr;} .grid.three{grid-template-columns:1fr 1fr 1fr;} }
+    label{display:block; font-size:12px; color: color-mix(in srgb, var(--text) 70%, var(--muted)); margin-bottom:6px}
+    input[type="text"], input[type="number"], input[type="date"], textarea, select{
+      width:100%;
+      background: var(--input);
       border:1px solid var(--border);
-      background: transparent;
       color: var(--text);
-      padding: 10px 10px;
       border-radius: 12px;
+      padding: 10px;
+      font-size:14px;
       outline:none;
-      font-size: 14px;
-      width: 100%;
     }
-    textarea{ min-height: 90px; resize: vertical; }
-    .hint{
-      font-size: 12px;
-      color: var(--muted);
+    textarea{min-height:70px; resize:vertical}
+    select option{background: var(--card); color:var(--text)}
+    .btns{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+    .rowline{height:1px; background: var(--border); margin:12px 0}
+    .out{
+      width:100%; min-height:360px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Noto Sans Mono", monospace;
     }
-    .req{
-      color: var(--danger);
-      font-weight: 900;
-      margin-left: 6px;
-      font-size: 12px;
+    .req{color:var(--danger); font-weight:900; margin-left:4px}
+    .badge{
+      font-size:12px; padding:2px 10px; border-radius:999px; border:1px solid var(--border);
+      background: var(--chip);
+      color: color-mix(in srgb, var(--text) 85%, var(--muted));
+      white-space:nowrap;
     }
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
+    .score{
+      font-size:14px; font-weight:900; color:var(--text);
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
     }
-    .chip{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
+    .score strong{color: var(--accent2)}
+    .toast{font-size:12px; margin-top:6px; color: var(--muted)}
+    .chkline{display:flex; flex-wrap:wrap; gap:8px}
+    .chk{
+      display:flex; align-items:center; gap:6px;
+      padding:8px 10px; border-radius: 12px;
       border:1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 10px;
-      background: transparent;
-      user-select:none;
+      background: var(--chip);
+      font-size:13px; color:var(--text);
     }
-    .chip input{ width:auto; }
-    .sub{
-      border-left: 3px solid color-mix(in srgb, var(--accent2) 55%, var(--border));
-      padding-left: 10px;
-      margin-top: 8px;
+    .chk input{accent-color: var(--accent2)}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; padding:2px 6px; border:1px solid var(--border); border-radius:8px; background: var(--chip)}
+
+    .stickyScore{
+      position: sticky;
+      top: 64px;
+      z-index: 5;
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      margin-bottom: 12px;
     }
-    .divider{
-      height:1px;
-      background: var(--border);
-      margin: 10px 0;
-    }
+
     .table{
-      width: 100%;
-      border-collapse: collapse;
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
       overflow:hidden;
-      border-radius: 12px;
       border:1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--card) 92%, transparent);
     }
-    .table th,.table td{
+    .table th, .table td{
       border-bottom:1px solid var(--border);
-      padding: 8px;
-      font-size: 13px;
-      vertical-align: top;
+      padding:10px;
+      vertical-align:top;
+      font-size:13px;
     }
     .table th{
-      text-align:left;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--card) 85%, var(--bg));
-      font-weight: 800;
-      white-space: nowrap;
+      text-align:left; font-size:12px; color:var(--muted);
+      background: var(--tablehead);
     }
-    .table tr:last-child td{ border-bottom:none; }
-    .mono{ font-family: var(--mono); }
-    .summary{
-      white-space: pre-wrap;
-      font-family: var(--sans);
-      font-size: 14px;
-      line-height: 1.55;
+    .table tr:last-child td{border-bottom:none}
+    .qno{width:44px; text-align:center; font-weight:900}
+    .pts{width:270px}
+    .mini{font-size:12px; color:var(--muted); line-height:1.35}
+    .inline{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .ptsel{width:100%}
+    .q2grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:6px;
     }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
+    .q2cell{display:flex; gap:6px; align-items:center}
+    .q2cell label{margin:0; font-size:12px; color:var(--muted)}
+    .q2cell select{padding:8px}
+
+    .fim-item{
       border:1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
+      background: color-mix(in srgb, var(--chip) 65%, transparent);
+      border-radius: 14px;
+      padding:10px;
     }
-    .ok{ color: var(--ok); font-weight: 900;}
-    .warn{ color: var(--danger); font-weight: 900;}
-    .right{ text-align:right; }
-    .mini{
-      font-size: 12px;
-      color: var(--muted);
+    .fim-head{
+      display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;
+      margin-bottom:8px;
     }
-    .soapHead{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .soapPill{
-      border:1px dashed color-mix(in srgb, var(--accent2) 55%, var(--border));
-      border-radius: 12px;
-      padding: 8px 10px;
-      background: color-mix(in srgb, var(--accent2) 7%, var(--card));
-      font-weight: 900;
-      letter-spacing:.2px;
-      font-size: 13px;
+    .fim-title{font-weight:900; font-size:13px}
+    .fim-row{display:grid; grid-template-columns:1fr; gap:8px}
+    @media (min-width: 920px){ .fim-row{grid-template-columns:1fr 1fr;} }
+    .fim-needed{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .fim-needed .chk{padding:6px 8px; font-size:12px}
+    .subcard{
+      border:1px dashed var(--border);
+      border-radius: 14px;
+      padding:10px;
+      background: color-mix(in srgb, var(--card) 92%, transparent);
+      margin-top:10px;
     }
   </style>
 </head>
-
 <body>
-  <div class="sticky">
-    <div class="topbar">
-      <div class="top-left">
-        <div class="brand">こえまる Pro｜初期評価フォーム（SOAP寄り）</div>
-        <div class="kpi">
-          <span class="pill"><span>FIM（運動/認知）</span><b id="kpiFim">- / -</b></span>
-          <span class="pill"><span>HDS-R</span><b id="kpiHds">- / 30</b></span>
-          <span class="pill"><span>GCS</span><b id="kpiGcs">- / 15</b></span>
-        </div>
-      </div>
-      <div class="top-right">
-        <button class="btn small" id="btnTheme">淡色/ダーク</button>
-        <button class="btn primary" id="btnGenerate">要約生成</button>
-        <button class="btn" id="btnCopy">コピー</button>
-        <button class="btn" id="btnMail">メール作成</button>
-        <button class="btn danger" id="btnClear">入力クリア</button>
-      </div>
-    </div>
-  </div>
-
+<header>
   <div class="wrap">
-    <div class="card">
-      <div class="soapHead">
-        <div class="soapPill">SOAP寄り：＜I＞= 情報（住環境/介護保険 等）｜＜O＞= 評価（所見/動作/FIM/HDS 等）</div>
-        <div class="tag">保存：宛先メール / 設定 / テーマのみ<span class="ok">（患者データ保存なし）</span></div>
-      </div>
-      <div class="mini">※iPhoneは「ファイル直開き」だと候補が出ないことがあるため、https（Safari）推奨。</div>
-    </div>
-
-    <!-- ケース情報 -->
-    <div class="card" id="secCase">
-      <h2>ケース情報</h2>
-      <div class="row">
-        <div class="field">
-          <label>ケースID<span class="req">必須</span></label>
-          <input id="caseId" placeholder="例：2026-03-05-A / 123" />
-          <div class="hint">個人情報は入力しません（ケースID運用）</div>
-        </div>
-        <div class="field">
-          <label>日付</label>
-          <input id="caseDate" type="date" />
-        </div>
-        <div class="field">
-          <label>メモ（任意）</label>
-          <input id="caseMemo" placeholder="例：入院〇日目 / 依頼科など（個人情報なし）" />
+    <div class="topbar">
+      <div>
+        <h1>初期評価フォーム（Pro フル） <span class="pill">淡色表示</span></h1>
+        <div class="sub">
+          ・患者氏名/住所/電話番号などは入力しない（ケースID運用）<br>
+          ・患者データは端末に保存しません（localStorage/cookie未使用）<br>
+          ・保存/共有するのは <span class="kbd">送信先メール</span> と <span class="kbd">設定（カスタム項目構成）</span> のみ（患者情報は含めません）<br>
+          ・見守り＝5（安全見守り／手順声かけ／準備）前提
         </div>
       </div>
-
-      <div class="divider"></div>
-
-      <h3>リハ意欲（追加）</h3>
-      <div class="row">
-        <div class="field">
-          <label>リハ意欲</label>
-          <select id="motivation">
-            <option value="">未選択</option>
-            <option>あり</option>
-            <option>なし</option>
-            <option>無気力</option>
-            <option>拒否</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>バイタル / 意識（追加：GCS）</h3>
-      <div class="row">
-        <div class="field">
-          <label>血圧（mmHg）</label>
-          <input id="vitalBp" placeholder="例：120/70" />
-        </div>
-        <div class="field">
-          <label>脈拍（/min）</label>
-          <input id="vitalHr" inputmode="numeric" placeholder="例：78" />
-        </div>
-        <div class="field">
-          <label>SpO₂（%）</label>
-          <input id="vitalSpo2" inputmode="numeric" placeholder="例：96" />
-        </div>
-        <div class="field">
-          <label>酸素</label>
-          <div class="row">
-            <div class="field" style="flex:0 1 160px; min-width:160px;">
-              <select id="o2Use">
-                <option value="">未選択</option>
-                <option value="なし">なし</option>
-                <option value="あり">あり</option>
-              </select>
-            </div>
-            <div class="field" style="flex:1 1 180px; min-width:160px;">
-              <input id="o2Flow" inputmode="decimal" placeholder="〇 L（例：2.0）" />
-            </div>
-          </div>
-          <div class="hint">酸素「あり」の場合のみLを記入（任意）</div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <div class="row">
-          <div class="field">
-            <label>GCS：E（1-4）</label>
-            <select id="gcsE">
-              <option value="">未選択</option>
-              <option value="4">E4（自発）</option>
-              <option value="3">E3（呼びかけ）</option>
-              <option value="2">E2（痛み）</option>
-              <option value="1">E1（なし）</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>GCS：V（1-5）</label>
-            <select id="gcsV">
-              <option value="">未選択</option>
-              <option value="5">V5（見当識あり）</option>
-              <option value="4">V4（混乱）</option>
-              <option value="3">V3（不適切語）</option>
-              <option value="2">V2（理解不能音）</option>
-              <option value="1">V1（なし）</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>GCS：M（1-6）</label>
-            <select id="gcsM">
-              <option value="">未選択</option>
-              <option value="6">M6（命令に従う）</option>
-              <option value="5">M5（疼痛局在）</option>
-              <option value="4">M4（逃避）</option>
-              <option value="3">M3（屈曲）</option>
-              <option value="2">M2（伸展）</option>
-              <option value="1">M1（なし）</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>GCS 合計</label>
-            <input id="gcsTotal" class="mono" readonly placeholder="E+V+M" />
-            <div class="hint">未選択がある場合は合計表示しません</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ＜I＞ 情報 -->
-    <div class="card" id="secInfo">
-      <h2>＜I＞情報（住環境 / 介護保険・サービス 等）</h2>
-
-      <h3>家族・同居</h3>
-      <div class="row">
-        <div class="field">
-          <label>同居</label>
-          <select id="cohab">
-            <option value="">未選択</option>
-            <option>独居</option>
-            <option>同居（家族）</option>
-            <option>同居（その他）</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>主介護者（任意）</label>
-          <input id="caregiver" placeholder="例：配偶者 / 子 / なし など" />
-        </div>
-        <div class="field">
-          <label>キーパーソン連携（任意）</label>
-          <input id="keyperson" placeholder="例：連携可 / 連絡調整中 など" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>住環境</h3>
-      <div class="row">
-        <div class="field">
-          <label>住居形態</label>
-          <select id="housingType">
-            <option value="">未選択</option>
-            <option>戸建て</option>
-            <option>集合住宅</option>
-            <option>施設</option>
-            <option>その他</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>階数/段差（任意）</label>
-          <input id="stairs" placeholder="例：1階生活 / 階段あり / 段差あり など" />
-        </div>
-        <div class="field">
-          <label>トイレ環境（任意）</label>
-          <input id="toiletEnv" placeholder="例：洋式 / 手すりあり / 車いす不可 など" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>介護保険・支援資源（追加：サービス関連もここに集約）</h3>
-      <div class="row">
-        <div class="field">
-          <label>介護保険</label>
-          <select id="ltci">
-            <option value="">未選択</option>
-            <option>なし</option>
-            <option>申請予定</option>
-            <option>申請中</option>
-            <option>認定あり</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>要介護度（任意）</label>
-          <select id="careLevel">
-            <option value="">未選択</option>
-            <option>要支援1</option><option>要支援2</option>
-            <option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>サービス利用（任意）</label>
-          <input id="services" placeholder="例：訪問介護/通所/福祉用具/訪問看護 など" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>利用可否・調整状況（任意）</label>
-          <input id="serviceStatus" placeholder="例：継続可 / 新規導入調整 / CM連携中 など" />
-        </div>
-        <div class="field">
-          <label>支援資源メモ（任意）</label>
-          <input id="supportMemo" placeholder="例：家族支援あり / 地域包括 / 施設候補 など" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ＜O＞ 評価 -->
-    <div class="card" id="secObj">
-      <h2>＜O＞評価（所見 / 動作 / ADL / FIM / HDS-R）</h2>
-
-      <h3>起居動作</h3>
-      <div class="row">
-        <div class="field">
-          <label>寝返り</label>
-          <select id="bedRoll">
-            <option value="">未選択</option>
-            <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option><option>不可</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>起き上がり</label>
-          <select id="bedUp">
-            <option value="">未選択</option>
-            <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option><option>不可</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>座位保持</label>
-          <select id="sitHold">
-            <option value="">未選択</option>
-            <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option><option>不可</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>立ち上がり</label>
-          <select id="standUp">
-            <option value="">未選択</option>
-            <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option><option>不可</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>身体所見</h3>
-      <div class="row">
-        <div class="field">
-          <label>麻痺（任意）</label>
-          <input id="palsy" placeholder="例：右上肢軽度 / なし など" />
-        </div>
-        <div class="field">
-          <label>ROM（任意）</label>
-          <input id="rom" placeholder="例：肩屈曲○○° / 制限あり など" />
-        </div>
-        <div class="field">
-          <label>感覚（任意）</label>
-          <input id="sens" placeholder="例：左下肢鈍麻 など" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>疼痛：有無</label>
-          <select id="painYn">
-            <option value="">未選択</option>
-            <option>なし</option>
-            <option>あり</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>疼痛部位（任意）</label>
-          <input id="painSite" placeholder="例：右膝 / 腰部 など" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>トイレ動作（追加：詳細化）</h3>
-      <div class="sub">
-        <div class="row">
-          <div class="field">
-            <label>ベッド→トイレ移動：手段</label>
-            <select id="toiletMoveMethod">
-              <option value="">未選択</option>
-              <option>独歩</option>
-              <option>杖歩行</option>
-              <option>歩行器</option>
-              <option>老人車</option>
-              <option>車いす</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>ベッド→トイレ移動：介助レベル</label>
-            <select id="toiletMoveAssist">
-              <option value="">未選択</option>
-              <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="field">
-            <label>トイレ内：移乗</label>
-            <select id="toiletTransfer">
-              <option value="">未選択</option>
-              <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>トイレ内：下衣操作</label>
-            <select id="toiletCloth">
-              <option value="">未選択</option>
-              <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>トイレ内：着座</label>
-            <select id="toiletSit">
-              <option value="">未選択</option>
-              <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>トイレ内：後始末</label>
-            <select id="toiletClean">
-              <option value="">未選択</option>
-              <option>自立</option><option>見守り</option><option>一部介助</option><option>全介助</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="field">
-            <label>尿意</label>
-            <select id="urgeUrine">
-              <option value="">未選択</option>
-              <option>あり</option>
-              <option>なし</option>
-              <option>不明</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>尿意を訴えられる</label>
-            <select id="urgeUrineTell">
-              <option value="">未選択</option>
-              <option>可能</option>
-              <option>困難</option>
-              <option>不明</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>便意</label>
-            <select id="urgeBowel">
-              <option value="">未選択</option>
-              <option>あり</option>
-              <option>なし</option>
-              <option>不明</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>便意を訴えられる</label>
-            <select id="urgeBowelTell">
-              <option value="">未選択</option>
-              <option>可能</option>
-              <option>困難</option>
-              <option>不明</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>HDS-R（Q9は野菜個数→自動採点）</h3>
-      <div class="mini">要約には Q1〜Q9 の項目別点数を出します（Q2：年/月/日/曜内訳、Q4/Q7内訳あり）。</div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th style="width:80px;">項目</th>
-            <th>入力</th>
-            <th style="width:120px;">点</th>
-          </tr>
-        </thead>
-        <tbody id="hdsTable"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" class="right"><b>合計</b></td>
-            <td class="mono"><b id="hdsTotal">-</b> / 30</td>
-          </tr>
-        </tfoot>
-      </table>
-
-      <div class="divider"></div>
-
-      <h3>FIM（運動13＋認知5）</h3>
-      <div class="mini">運動13のみ紐づけ（複数可）。要約生成時に必ず再計算（B方式）。未入力項目は要約に出しません。</div>
-
-      <div class="grid two">
-        <div class="card" style="box-shadow:none;">
-          <h3>運動（13）</h3>
-          <div id="fimMotor"></div>
-        </div>
-        <div class="card" style="box-shadow:none;">
-          <h3>認知（5）</h3>
-          <div id="fimCognitive"></div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <h3>カスタム項目（config）</h3>
-      <div class="mini">患者データは保存しません。保存OK：設定（カスタム項目構成）だけ。</div>
-      <div class="row">
-        <button class="btn small" id="btnAddCustom">項目追加</button>
-        <button class="btn small" id="btnExportConfig">config.json 書き出し</button>
-        <label class="btn small" style="cursor:pointer;">
-          config.json 読み込み
-          <input id="fileImportConfig" type="file" accept="application/json" style="display:none;">
-        </label>
-      </div>
-      <div class="divider"></div>
-      <div id="customFields"></div>
-    </div>
-
-    <!-- 要約 -->
-    <div class="card" id="secSummary">
-      <h2>要約（見出し＋箇条書き）</h2>
-      <div class="mini">末尾で同じ内容が2回出るバグを防ぎ、1回だけ出力します。</div>
-      <div class="divider"></div>
-      <div id="summaryOut" class="summary">（未生成）</div>
-    </div>
-
-    <!-- 設定 -->
-    <div class="card" id="secSettings">
-      <h2>設定（端末保存OK）</h2>
-      <div class="row">
-        <div class="field">
-          <label>送信先メール（端末保存OK）</label>
-          <input id="mailTo" type="email" placeholder="例：rehab@example.com" />
-          <div class="hint">mailtoでメール文面作成に使用。患者データは保存しません。</div>
-        </div>
-        <div class="field" style="flex:0 1 220px; min-width:220px;">
-          <label>宛先を保存</label>
-          <button class="btn" id="btnSaveMail">保存</button>
-          <div class="hint">保存対象：宛先のみ</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="mini">
-        保存対象：<b>宛先メール / カスタム設定 / テーマ</b> のみ。<br>
-        患者データ（評価内容）は <b>localStorage/cookie に保存しません</b>。
+      <div class="topbtns">
+        <button class="btn" id="btn_theme">ダーク切替</button>
       </div>
     </div>
   </div>
+</header>
+
+<main>
+
+  <div class="stickyScore">
+    <div class="score">
+      FIM 合計：<strong id="fim_total">0</strong>
+      <span class="badge">運動13：<span id="fim_motor">0</span></span>
+      <span class="badge">認知5：<span id="fim_cog">0</span></span>
+      <span class="badge">入力済：<span id="fim_count">0</span>/18</span>
+      <span class="badge">HDS-R：<span id="hds_total_top">0</span>/30</span>
+      <span class="badge">GCS：<span id="gcs_total_top">-</span>/15</span>
+    </div>
+    <div class="hint">※未選択の項目は合計に含めません（入力した分だけ集計）</div>
+  </div>
+
+  <div class="card">
+    <h2>メール送信先（初期設定） <span class="badge">端末に保存：宛先のみ</span></h2>
+    <div class="hint">※保存されるのは「送信先メールアドレス」だけ（患者データは保存しません）。端末共有の場合は「宛先クリア」を推奨。</div>
+    <div class="grid two" style="margin-top:12px;">
+      <div>
+        <label>送信先メール（固定）</label>
+        <input id="mail_to" type="text" placeholder="例）team@example.com">
+      </div>
+      <div>
+        <label>操作</label>
+        <div class="btns" style="margin-top:0;">
+          <button class="btn ok" id="btn_mail_save">宛先を保存</button>
+          <button class="btn danger" id="btn_mail_clear">宛先クリア</button>
+        </div>
+        <div class="toast" id="mail_status"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ケース情報 <span class="badge">必須：ケースID</span></h2>
+    <div class="grid two">
+      <div>
+        <label>ケースID<span class="req">＊</span></label>
+        <input id="case_id" type="text" placeholder="例）A-1234（氏名は入れない）">
+      </div>
+      <div>
+        <label>日付</label>
+        <input id="date" type="date">
+      </div>
+    </div>
+
+    <div class="grid three" style="margin-top:12px;">
+      <div>
+        <label>リハ意欲</label>
+        <select id="motivation"></select>
+      </div>
+      <div>
+        <label>血圧（mmHg）</label>
+        <input id="v_bp" type="text" placeholder="例）120/70">
+      </div>
+      <div>
+        <label>脈拍（/min）</label>
+        <input id="v_hr" type="number" min="0" step="1" placeholder="例）78">
+      </div>
+      <div>
+        <label>SpO₂（%）</label>
+        <input id="v_spo2" type="number" min="0" max="100" step="1" placeholder="例）96">
+      </div>
+      <div>
+        <label>酸素</label>
+        <select id="o2_use"></select>
+      </div>
+      <div>
+        <label>酸素流量（L）</label>
+        <input id="o2_lpm" type="number" min="0" step="0.1" placeholder="例）2.0">
+      </div>
+    </div>
+
+    <div class="rowline"></div>
+    <div class="score">GCS <span class="badge">E/V/M</span></div>
+    <div class="grid three" style="margin-top:10px;">
+      <div><label>E（1-4）</label><select id="gcs_e"></select></div>
+      <div><label>V（1-5）</label><select id="gcs_v"></select></div>
+      <div><label>M（1-6）</label><select id="gcs_m"></select></div>
+    </div>
+    <div class="hint" style="margin-top:8px;">合計：<span class="badge">E+V+M = <span id="gcs_total">-</span>/15</span>（未選択がある場合は “-”）</div>
+
+    <div style="margin-top:12px;">
+      <label>メモ（任意）</label>
+      <textarea id="note_general" placeholder="個人情報は入れない"></textarea>
+    </div>
+  </div>
+
+  <!-- ＜I＞情報：見出しだけSOAP寄せ（中身は前回のまま） -->
+  <div class="card">
+    <h2>＜I＞情報：家族・同居</h2>
+    <div class="grid three">
+      <div><label>退院先</label><select id="discharge_plan"></select></div>
+      <div><label>同居</label><select id="living_status"></select></div>
+      <div><label>主介護者（続柄）</label><select id="main_caregiver"></select></div>
+      <div><label>家族支援頻度</label><select id="support_frequency"></select></div>
+      <div><label>本人希望</label><select id="wish_patient"></select></div>
+      <div><label>家族希望</label><select id="wish_family"></select></div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="family_note"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>＜I＞情報：住環境</h2>
+    <div class="grid three">
+      <div><label>住宅形態</label><select id="housing_type"></select></div>
+      <div><label>階段</label><select id="stairs"></select></div>
+      <div><label>寝室</label><select id="bedroom_floor"></select></div>
+      <div><label>トイレ</label><select id="toilet_floor"></select></div>
+      <div><label>玄関段差</label><select id="entrance_step"></select></div>
+      <div>
+        <label>浴室（該当チェック）</label>
+        <div class="chkline" id="bathroom_checks"></div>
+      </div>
+      <div style="grid-column:1/-1;">
+        <label>福祉用具・環境（該当チェック）</label>
+        <div class="chkline" id="device_checks"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="env_note"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>＜I＞情報：支援資源（介護保険・サービス）</h2>
+    <div class="grid three">
+      <div><label>介護保険</label><select id="ltc_insurance"></select></div>
+      <div>
+        <label>利用サービス（該当チェック）</label>
+        <div class="chkline" id="services_checks"></div>
+      </div>
+      <div><label>通院支援</label><select id="outpatient_support"></select></div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>補足（任意）</label>
+      <textarea id="support_note"></textarea>
+    </div>
+  </div>
+
+  <!-- ＜O＞評価 -->
+  <div class="card">
+    <h2>＜O＞評価：起居動作</h2>
+    <div class="hint">自立 / 支持物で可 / 見守り / 一部介助 / 全介助 / 不可</div>
+    <div class="grid two" style="margin-top:12px;">
+      <div><label>寝返り</label><select id="bed_roll"></select></div>
+      <div><label>起き上がり</label><select id="bed_situp"></select></div>
+      <div><label>座位保持</label><select id="bed_sitting"></select></div>
+      <div><label>立ち上がり</label><select id="bed_standup"></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>＜O＞評価：トイレ動作（詳細） <span class="badge">追加</span></h2>
+    <div class="hint">ベッド→トイレ移動（手段＋介助）／トイレ内（移乗・下衣・着座・後始末）／尿意・便意（訴え可否）</div>
+
+    <div class="rowline"></div>
+    <div class="score">ベッド→トイレ移動</div>
+    <div class="grid two" style="margin-top:10px;">
+      <div><label>手段</label><select id="to_move_method"></select></div>
+      <div><label>介助レベル</label><select id="to_move_assist"></select></div>
+    </div>
+
+    <div class="rowline"></div>
+    <div class="score">トイレ内動作</div>
+    <div class="grid two" style="margin-top:10px;">
+      <div><label>移乗</label><select id="to_in_transfer"></select></div>
+      <div><label>下衣操作</label><select id="to_in_cloth"></select></div>
+      <div><label>着座</label><select id="to_in_sit"></select></div>
+      <div><label>後始末</label><select id="to_in_clean"></select></div>
+    </div>
+
+    <div class="rowline"></div>
+    <div class="score">尿意・便意</div>
+    <div class="grid two" style="margin-top:10px;">
+      <div><label>尿意</label><select id="urge_u"></select></div>
+      <div><label>尿意を訴えられる</label><select id="urge_u_tell"></select></div>
+      <div><label>便意</label><select id="urge_b"></select></div>
+      <div><label>便意を訴えられる</label><select id="urge_b_tell"></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>＜O＞評価：身体所見（麻痺・ROM・感覚・疼痛）</h2>
+    <div class="grid" style="gap:14px;">
+      <div>
+        <div class="score">麻痺（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="paral_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="paral_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="paral_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="paral_le_r">下肢 右</label>
+        </div>
+      </div>
+
+      <div>
+        <div class="score">可動域制限（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="rom_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="rom_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="rom_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="rom_le_r">下肢 右</label>
+        </div>
+      </div>
+
+      <div>
+        <div class="score">感覚障害（有無）</div>
+        <div class="chkline" style="margin-top:10px;">
+          <label class="chk"><input type="checkbox" id="sens_ue_l">上肢 左</label>
+          <label class="chk"><input type="checkbox" id="sens_ue_r">上肢 右</label>
+          <label class="chk"><input type="checkbox" id="sens_le_l">下肢 左</label>
+          <label class="chk"><input type="checkbox" id="sens_le_r">下肢 右</label>
+          <label class="chk"><input type="checkbox" id="sens_other">その他</label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>感覚障害（その他）</label>
+          <input id="sens_other_note" type="text" placeholder="例）体幹、手指、足底など">
+        </div>
+      </div>
+
+      <div>
+        <div class="score">疼痛</div>
+        <div class="grid two" style="margin-top:10px;">
+          <div>
+            <label>疼痛</label>
+            <select id="pain_yes">
+              <option value="">未選択</option>
+              <option value="なし">なし</option>
+              <option value="あり">あり</option>
+            </select>
+          </div>
+          <div>
+            <label>部位（備考）</label>
+            <input id="pain_site" type="text" placeholder="例）右肩、腰部、左膝など">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HDS-R（前回の見やすさ・配点を完全維持） -->
+  <div class="card">
+    <h2>改訂長谷川式簡易知能評価（HDS-R） <span class="badge">設問＋採点候補</span></h2>
+    <div class="hint">点数入力で自動合計。Q9（野菜）は「個数→点数自動」。</div>
+
+    <table class="table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th class="qno">No</th>
+          <th>設問</th>
+          <th class="pts">採点（候補）・入力</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="qno">1</td>
+          <td>お歳はいくつですか？（2年までの誤差は正解）</td>
+          <td class="pts"><div class="mini">0 / 1</div><select id="hds_q1" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">2</td>
+          <td>今日は何年何月何日ですか？ 何曜日ですか？（年/月/日/曜日：各1点）</td>
+          <td class="pts">
+            <div class="mini">年 0/1　月 0/1　日 0/1　曜日 0/1</div>
+            <div class="q2grid">
+              <div class="q2cell"><label>年</label><select id="hds_q2_y"></select></div>
+              <div class="q2cell"><label>月</label><select id="hds_q2_m"></select></div>
+              <div class="q2cell"><label>日</label><select id="hds_q2_d"></select></div>
+              <div class="q2cell"><label>曜</label><select id="hds_q2_w"></select></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">3</td>
+          <td>私たちが今いるところはどこですか？（自発2点／5秒後に正答1点）</td>
+          <td class="pts"><div class="mini">0 / 1 / 2</div><select id="hds_q3" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">4</td>
+          <td>3つの言葉（直後再生：各1点）<br><span class="mini">採用系列：桜/猫/電車、梅/犬/自動車 など</span></td>
+          <td class="pts">
+            <div class="mini">言葉1/2/3：各 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">言葉1</label><select id="hds_q4_a"></select>
+              <label class="mini">言葉2</label><select id="hds_q4_b"></select>
+              <label class="mini">言葉3</label><select id="hds_q4_c"></select>
+            </div>
+            <div style="margin-top:8px;">
+              <label class="mini">採用した言葉（任意メモ）</label>
+              <input id="hds_q4_words" type="text" placeholder="例）桜/猫/電車">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">5</td>
+          <td>100-7=?、さらに-7=?</td>
+          <td class="pts">
+            <div class="mini">93 0/1　86 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">93</label><select id="hds_q5_1"></select>
+              <label class="mini">86</label><select id="hds_q5_2"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">6</td>
+          <td>数字の逆唱（6-8-2／3-5-2-9）</td>
+          <td class="pts">
+            <div class="mini">各 0/1</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">2-8-6</label><select id="hds_q6_1"></select>
+              <label class="mini">9-2-5-3</label><select id="hds_q6_2"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">7</td>
+          <td>遅延再生（自発2点／ヒント1点）</td>
+          <td class="pts">
+            <div class="mini">言葉1/2/3：各 0/1/2</div>
+            <div class="inline" style="margin-top:6px;">
+              <label class="mini">言葉1</label><select id="hds_q7_a"></select>
+              <label class="mini">言葉2</label><select id="hds_q7_b"></select>
+              <label class="mini">言葉3</label><select id="hds_q7_c"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="qno">8</td>
+          <td>5つの物品の再生</td>
+          <td class="pts"><div class="mini">0〜5</div><select id="hds_q8" class="ptsel"></select></td>
+        </tr>
+        <tr>
+          <td class="qno">9</td>
+          <td>野菜の名前（個数→点数自動）<br><span class="mini">0〜5=0点、6=1、7=2、8=3、9=4、10以上=5</span></td>
+          <td class="pts">
+            <div class="mini">個数 → 自動採点（0〜5点）</div>
+            <div class="inline" style="margin-top:6px;">
+              <input id="hds_q9_count" type="number" min="0" step="1" style="width:120px" placeholder="個数">
+              <span class="badge">点数：<span id="hds_q9_score">0</span></span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rowline"></div>
+    <div class="score">HDS-R 合計：<strong id="hds_total">0</strong>/30</div>
+  </div>
+
+  <!-- FIM（前回のUI/紐づけを完全維持） -->
+  <div class="card">
+    <h2>運動（FIM 13項目） <span class="badge">項目ごとの紐づけ</span></h2>
+    <div class="hint">
+      紐づけ：見守り（安全/手順）・準備・支持物・補助具（細項目）・時間増大・疲労で低下。<br>
+      ※介助量（最小/中等度/最大/全介助）は紐づけから除外（点数で表現）
+    </div>
+    <div class="grid two" id="fim_motor_wrap" style="margin-top:12px;"></div>
+    <div class="rowline"></div>
+    <div class="hint">全体補足（任意）</div>
+    <textarea id="adl_note" placeholder="例）介助ポイント、時間増大、疲労で低下など"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>認知（FIM 5項目） <span class="badge">紐づけなし</span></h2>
+    <div class="grid two" id="fim_cog_wrap" style="margin-top:12px;"></div>
+    <div class="hint" style="margin-top:10px;">生活影響・支援（任意）</div>
+    <textarea id="cog_note" placeholder="例）注意逸れやすい、手順分割が有効、外的手掛かりが必要 など"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>カスタム項目（追加・削除） <span class="badge">自院仕様に増減</span></h2>
+    <div class="hint">※ここで追加するのは「項目の型」です（患者データではありません）。</div>
+    <div class="grid three" style="margin-top:12px;">
+      <div><label>項目名</label><input id="cf_label" type="text" placeholder="例）家屋評価：手すり設置予定"></div>
+      <div>
+        <label>入力タイプ</label>
+        <select id="cf_type">
+          <option value="text">短文（1行）</option>
+          <option value="textarea">長文（メモ）</option>
+          <option value="select">選択（単一）</option>
+          <option value="multiselect">選択（複数）</option>
+        </select>
+      </div>
+      <div><label>選択肢（選択タイプのみ）</label><input id="cf_options" type="text" placeholder="例）あり,なし,未確認"></div>
+    </div>
+    <div class="btns">
+      <button class="btn ok" id="btn_cf_add">項目を追加</button>
+      <button class="btn" id="btn_cf_clear">入力欄クリア</button>
+    </div>
+    <div class="rowline"></div>
+    <div class="hint">追加した項目一覧（↑↓で並べ替え／削除できます）</div>
+    <div id="custom_list" class="grid" style="margin-top:10px;"></div>
+    <div id="custom_values_form" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>設定（config.json） <span class="badge">書き出し／読み込み</span></h2>
+    <div class="btns">
+      <button class="btn" id="btn_export">設定を書き出し（config.json）</button>
+      <button class="btn" id="btn_import">設定を読み込み</button>
+      <button class="btn danger" id="btn_config_reset">設定を初期化</button>
+      <input id="file_input" type="file" accept="application/json" style="display:none;">
+    </div>
+    <div class="toast" id="cfg_status"></div>
+  </div>
+
+  <div class="card">
+    <h2>出力（コピー／メール作成）</h2>
+    <div class="btns">
+      <button class="btn primary" id="btn_generate">要約を生成</button>
+      <button class="btn ok" id="btn_copy">コピー</button>
+      <button class="btn primary" id="btn_mail">メール作成（本文入り）</button>
+      <button class="btn danger" id="btn_clear">入力をクリア</button>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div style="margin-top:10px;">
+      <label>生成結果</label>
+      <textarea class="out" id="output" readonly></textarea>
+    </div>
+  </div>
+
+</main>
 
 <script>
-/* =========================
-   Storage policy
-   - Allow: theme, mailTo, customConfig
-   - Disallow: patient data (no form persistence)
-========================= */
-const STORAGE_KEYS = {
-  theme: "koemaru_theme",
-  mailTo: "koemaru_mailto",
-  customConfig: "koemaru_custom_config_v1"
-};
+  const MAIL_KEY   = "koemaru_mail_to";
+  const CONFIG_KEY = "koemaru_pro_config_v6";
+  const THEME_KEY  = "koemaru_theme";
 
-function $(id){ return document.getElementById(id); }
+  const $ = (id)=>document.getElementById(id);
+  const trim = (s)=> (s ?? "").toString().trim();
 
-function setTheme(theme){
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem(STORAGE_KEYS.theme, theme);
-}
-function toggleTheme(){
-  const cur = document.documentElement.getAttribute("data-theme") || "light";
-  setTheme(cur === "dark" ? "light" : "dark");
-}
-
-/* =========================
-   Utilities
-========================= */
-function clean(s){
-  return (s ?? "").toString().trim();
-}
-function hasValue(v){ return clean(v) !== ""; }
-function bulletize(lines){
-  // lines: array of strings
-  return lines.filter(x => hasValue(x)).map(x => `・${x}`);
-}
-function heading(title){ return `${title}\n`; }
-function section(title, bullets){
-  if(!bullets || bullets.length === 0) return "";
-  return `${title}\n${bullets.join("\n")}\n`;
-}
-function safeNum(x){
-  const n = Number(x);
-  return Number.isFinite(n) ? n : null;
-}
-
-/* =========================
-   Case / KPI
-========================= */
-function computeGcs(){
-  const e = safeNum($("gcsE").value);
-  const v = safeNum($("gcsV").value);
-  const m = safeNum($("gcsM").value);
-  if(e===null || v===null || m===null) return null;
-  const total = e+v+m;
-  return {e,v,m,total};
-}
-function refreshGcsKpi(){
-  const g = computeGcs();
-  if(!g){
-    $("gcsTotal").value = "";
-    $("kpiGcs").textContent = "- / 15";
-    return;
+  function setToday(){ $("date").valueAsDate = new Date(); }
+  function yyyymmdd(dateStr){
+    if(!dateStr) return "";
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}${m}${da}`;
   }
-  $("gcsTotal").value = `E${g.e} V${g.v} M${g.m} = ${g.total}`;
-  $("kpiGcs").textContent = `${g.total} / 15`;
-}
-
-/* =========================
-   HDS-R
-   Total 30, with breakdown and sub-items
-   - Q1: Age (1)
-   - Q2: Orientation to time (Year/Month/Day/Week) (4)
-   - Q3: Place (1)
-   - Q4: Immediate recall 3 words (0-3) + show each
-   - Q5: 100-7 twice (0-2)
-   - Q6: Digits backward (0-2)
-   - Q7: Delayed recall 3 words (0-3) + show each
-   - Q8: Object naming (0-2)
-   - Q9: Vegetables count (0-5) auto
-========================= */
-const HDS = {
-  words: ["さくら","ねこ","でんしゃ"] // 例：固定ワード（必要なら後で変更可）
-};
-
-function buildHdsRow(id, label, inputEl, scoreElId){
-  const tr = document.createElement("tr");
-  const td1 = document.createElement("td"); td1.textContent = label;
-  const td2 = document.createElement("td"); td2.appendChild(inputEl);
-  const td3 = document.createElement("td"); td3.className="mono"; td3.id = scoreElId; td3.textContent = "-";
-  tr.append(td1, td2, td3);
-  return tr;
-}
-
-function makeSelect(options, placeholder="未選択"){
-  const sel = document.createElement("select");
-  const op0 = document.createElement("option");
-  op0.value=""; op0.textContent=placeholder;
-  sel.appendChild(op0);
-  for(const o of options){
-    const op = document.createElement("option");
-    op.value = o.value ?? o;
-    op.textContent = o.label ?? o;
-    sel.appendChild(op);
+  function yyyy_mm_dd(dateStr){
+    if(!dateStr) return "";
+    const d = new Date(dateStr);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
   }
-  return sel;
-}
-
-const HDS_STATE = {}; // DOM refs
-function initHds(){
-  const tb = $("hdsTable");
-  tb.innerHTML = "";
-
-  // Q1 Age correct?
-  const q1 = makeSelect([{label:"正答（1）", value:"1"},{label:"誤答（0）", value:"0"}]);
-  q1.id="hds_q1";
-  HDS_STATE.q1 = q1;
-  tb.appendChild(buildHdsRow("q1", "Q1", wrapInline("年齢", q1), "hds_s1"));
-
-  // Q2 Year/Month/Day/Week
-  const q2wrap = document.createElement("div");
-  q2wrap.className="row";
-  const q2y = makeSelect([{label:"年○（1）", value:"1"},{label:"年×（0）", value:"0"}]); q2y.id="hds_q2y";
-  const q2m = makeSelect([{label:"月○（1）", value:"1"},{label:"月×（0）", value:"0"}]); q2m.id="hds_q2m";
-  const q2d = makeSelect([{label:"日○（1）", value:"1"},{label:"日×（0）", value:"0"}]); q2d.id="hds_q2d";
-  const q2w = makeSelect([{label:"曜○（1）", value:"1"},{label:"曜×（0）", value:"0"}]); q2w.id="hds_q2w";
-  [q2y,q2m,q2d,q2w].forEach(s=>{
-    const f=document.createElement("div"); f.className="field"; f.style.minWidth="140px"; f.style.flex="0 1 160px";
-    f.appendChild(s); q2wrap.appendChild(f);
-  });
-  HDS_STATE.q2y=q2y; HDS_STATE.q2m=q2m; HDS_STATE.q2d=q2d; HDS_STATE.q2w=q2w;
-  tb.appendChild(buildHdsRow("q2", "Q2", wrapBlock("見当識（時間）", q2wrap), "hds_s2"));
-
-  // Q3 Place
-  const q3 = makeSelect([{label:"正答（1）", value:"1"},{label:"誤答（0）", value:"0"}]);
-  q3.id="hds_q3";
-  HDS_STATE.q3 = q3;
-  tb.appendChild(buildHdsRow("q3", "Q3", wrapInline("場所の見当識", q3), "hds_s3"));
-
-  // Q4 Immediate recall (3 words)
-  const q4wrap = document.createElement("div");
-  q4wrap.className="row";
-  const q4a = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q4a.id="hds_q4a";
-  const q4b = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q4b.id="hds_q4b";
-  const q4c = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q4c.id="hds_q4c";
-  [q4a,q4b,q4c].forEach((s,idx)=>{
-    const f=document.createElement("div"); f.className="field"; f.style.minWidth="150px"; f.style.flex="0 1 180px";
-    const lab=document.createElement("div"); lab.className="mini"; lab.textContent = `語${idx+1}（${HDS.words[idx]}）`;
-    f.appendChild(lab); f.appendChild(s);
-    q4wrap.appendChild(f);
-  });
-  HDS_STATE.q4a=q4a; HDS_STATE.q4b=q4b; HDS_STATE.q4c=q4c;
-  tb.appendChild(buildHdsRow("q4", "Q4", wrapBlock("3語即時再生", q4wrap), "hds_s4"));
-
-  // Q5 100-7 twice
-  const q5 = makeSelect([{label:"2回正（2）", value:"2"},{label:"1回正（1）", value:"1"},{label:"0回（0）", value:"0"}]);
-  q5.id="hds_q5";
-  HDS_STATE.q5=q5;
-  tb.appendChild(buildHdsRow("q5", "Q5", wrapInline("計算（100-7×2）", q5), "hds_s5"));
-
-  // Q6 backward digits
-  const q6 = makeSelect([{label:"2問正（2）", value:"2"},{label:"1問正（1）", value:"1"},{label:"0問（0）", value:"0"}]);
-  q6.id="hds_q6";
-  HDS_STATE.q6=q6;
-  tb.appendChild(buildHdsRow("q6", "Q6", wrapInline("逆唱", q6), "hds_s6"));
-
-  // Q7 delayed recall (3 words)
-  const q7wrap = document.createElement("div");
-  q7wrap.className="row";
-  const q7a = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q7a.id="hds_q7a";
-  const q7b = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q7b.id="hds_q7b";
-  const q7c = makeSelect([{label:"正（1）", value:"1"},{label:"誤（0）", value:"0"}]); q7c.id="hds_q7c";
-  [q7a,q7b,q7c].forEach((s,idx)=>{
-    const f=document.createElement("div"); f.className="field"; f.style.minWidth="150px"; f.style.flex="0 1 180px";
-    const lab=document.createElement("div"); lab.className="mini"; lab.textContent = `語${idx+1}（${HDS.words[idx]}）`;
-    f.appendChild(lab); f.appendChild(s);
-    q7wrap.appendChild(f);
-  });
-  HDS_STATE.q7a=q7a; HDS_STATE.q7b=q7b; HDS_STATE.q7c=q7c;
-  tb.appendChild(buildHdsRow("q7", "Q7", wrapBlock("3語遅延再生", q7wrap), "hds_s7"));
-
-  // Q8 object naming
-  const q8 = makeSelect([{label:"2つ正（2）", value:"2"},{label:"1つ正（1）", value:"1"},{label:"0（0）", value:"0"}]);
-  q8.id="hds_q8";
-  HDS_STATE.q8=q8;
-  tb.appendChild(buildHdsRow("q8", "Q8", wrapInline("物品呼称", q8), "hds_s8"));
-
-  // Q9 vegetables count -> auto scoring
-  const q9wrap = document.createElement("div");
-  q9wrap.className="row";
-  const q9 = document.createElement("input");
-  q9.id="hds_q9"; q9.inputMode="numeric"; q9.placeholder="野菜の個数（例：7）";
-  const f=document.createElement("div"); f.className="field"; f.style.minWidth="220px"; f.style.flex="0 1 260px";
-  f.appendChild(q9); q9wrap.appendChild(f);
-  HDS_STATE.q9=q9;
-  tb.appendChild(buildHdsRow("q9", "Q9", wrapBlock("野菜（個数→自動採点）", q9wrap), "hds_s9"));
-
-  // listeners
-  Object.values(HDS_STATE).forEach(el=>{
-    el.addEventListener("input", refreshHds);
-    el.addEventListener("change", refreshHds);
-  });
-  refreshHds();
-}
-
-function wrapInline(title, el){
-  const w=document.createElement("div");
-  w.className="row";
-  const t=document.createElement("div"); t.className="mini"; t.style.minWidth="140px"; t.textContent=title;
-  const f=document.createElement("div"); f.className="field"; f.style.flex="1 1 220px"; f.style.minWidth="220px";
-  f.appendChild(el);
-  w.append(t,f);
-  return w;
-}
-function wrapBlock(title, el){
-  const w=document.createElement("div");
-  const t=document.createElement("div"); t.className="mini"; t.style.marginBottom="6px"; t.textContent=title;
-  w.append(t, el);
-  return w;
-}
-
-function scoreFromSelect(sel){
-  if(!hasValue(sel.value)) return null;
-  const n = Number(sel.value);
-  return Number.isFinite(n) ? n : null;
-}
-
-function scoreHdsQ9(count){
-  const n = Number(count);
-  if(!Number.isFinite(n) || n<0) return null;
-  // Common rubric: 0=0, 1-5=1..5? Many use: 0=0, 1-2=1,3-4=2,5-6=3,7-8=4,9+=5
-  // We'll use a simple and widely used step rubric:
-  if(n===0) return 0;
-  if(n<=2) return 1;
-  if(n<=4) return 2;
-  if(n<=6) return 3;
-  if(n<=8) return 4;
-  return 5;
-}
-
-function refreshHds(){
-  const s1 = scoreFromSelect(HDS_STATE.q1);
-  const q2y = scoreFromSelect(HDS_STATE.q2y);
-  const q2m = scoreFromSelect(HDS_STATE.q2m);
-  const q2d = scoreFromSelect(HDS_STATE.q2d);
-  const q2w = scoreFromSelect(HDS_STATE.q2w);
-  const s2 = (q2y??0)+(q2m??0)+(q2d??0)+(q2w??0);
-  const s3 = scoreFromSelect(HDS_STATE.q3);
-  const q4a=scoreFromSelect(HDS_STATE.q4a);
-  const q4b=scoreFromSelect(HDS_STATE.q4b);
-  const q4c=scoreFromSelect(HDS_STATE.q4c);
-  const s4 = (q4a??0)+(q4b??0)+(q4c??0);
-  const s5 = scoreFromSelect(HDS_STATE.q5);
-  const s6 = scoreFromSelect(HDS_STATE.q6);
-  const q7a=scoreFromSelect(HDS_STATE.q7a);
-  const q7b=scoreFromSelect(HDS_STATE.q7b);
-  const q7c=scoreFromSelect(HDS_STATE.q7c);
-  const s7 = (q7a??0)+(q7b??0)+(q7c??0);
-  const s8 = scoreFromSelect(HDS_STATE.q8);
-  const s9 = scoreHdsQ9(HDS_STATE.q9.value);
-
-  setCell("hds_s1", s1);
-  setCell("hds_s2", hasAnySelected([HDS_STATE.q2y,HDS_STATE.q2m,HDS_STATE.q2d,HDS_STATE.q2w]) ? s2 : null, `（年${q2y??0}/月${q2m??0}/日${q2d??0}/曜${q2w??0}）`);
-  setCell("hds_s3", s3);
-  setCell("hds_s4", hasAnySelected([HDS_STATE.q4a,HDS_STATE.q4b,HDS_STATE.q4c]) ? s4 : null, `（${q4a??0},${q4b??0},${q4c??0}）`);
-  setCell("hds_s5", s5);
-  setCell("hds_s6", s6);
-  setCell("hds_s7", hasAnySelected([HDS_STATE.q7a,HDS_STATE.q7b,HDS_STATE.q7c]) ? s7 : null, `（${q7a??0},${q7b??0},${q7c??0}）`);
-  setCell("hds_s8", s8);
-  setCell("hds_s9", s9);
-
-  // Total: include nulls as 0 only if something selected? For display, show "-" if all empty
-  const scores = [s1,s2,s3,s4,s5,s6,s7,s8,s9];
-  const any = anySelectedHds();
-  if(!any){
-    $("hdsTotal").textContent = "-";
-    $("kpiHds").textContent = "- / 30";
-    return;
+  function toast(msg, ok=true){
+    const el = $("toast");
+    el.textContent = msg;
+    el.style.color = ok ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
+    setTimeout(()=>{ el.textContent=""; el.style.color=""; }, 2500);
   }
-  const total = (s1??0)+s2+(s3??0)+s4+(s5??0)+(s6??0)+s7+(s8??0)+(s9??0);
-  $("hdsTotal").textContent = String(total);
-  $("kpiHds").textContent = `${total} / 30`;
-}
-
-function setCell(id, val, suffix=""){
-  const el = $(id);
-  if(val===null || val===undefined){
-    el.textContent = "-";
-  }else{
-    el.textContent = `${val}${suffix}`;
-  }
-}
-function hasAnySelected(selects){
-  return selects.some(s => hasValue(s.value));
-}
-function anySelectedHds(){
-  // If any input or select has value
-  return Object.values(HDS_STATE).some(el => hasValue(el.value));
-}
-
-/* =========================
-   FIM
-========================= */
-const FIM = {
-  motor: [
-    "食事","整容","清拭","更衣（上）","更衣（下）","トイレ動作",
-    "排尿管理","排便管理",
-    "ベッド/椅子/車いす移乗","トイレ移乗","浴槽/シャワー移乗",
-    "歩行/車いす","階段"
-  ],
-  cognitive: ["理解","表出","社会的交流","問題解決","記憶"],
-  links: [
-    "見守り（安全）","見守り（手順）","準備","支持物","補助具","時間増大","疲労で低下"
-  ],
-  aids: ["杖","歩行器","伝い歩き","シルバーカー","その他"]
-};
-
-function scoreSelect7(){
-  const sel = document.createElement("select");
-  const op0=document.createElement("option"); op0.value=""; op0.textContent="未入力";
-  sel.appendChild(op0);
-  for(let i=1;i<=7;i++){
-    const op=document.createElement("option");
-    op.value=String(i);
-    op.textContent=`${i}`;
-    sel.appendChild(op);
-  }
-  return sel;
-}
-
-function initFim(){
-  // Motor
-  const mWrap = $("fimMotor");
-  mWrap.innerHTML="";
-  FIM.motor.forEach((name, idx)=>{
-    const box=document.createElement("div");
-    box.className="card";
-    box.style.boxShadow="none";
-    box.style.marginBottom="10px";
-
-    const row=document.createElement("div");
-    row.className="row";
-
-    const f1=document.createElement("div"); f1.className="field"; f1.style.minWidth="220px";
-    const lab=document.createElement("label"); lab.textContent = `${idx+1}. ${name}`;
-    const sel=scoreSelect7();
-    sel.id = `fim_m_${idx}`;
-    f1.appendChild(lab); f1.appendChild(sel);
-
-    row.appendChild(f1);
-
-    // link checkboxes (motor only)
-    const f2=document.createElement("div"); f2.className="field"; f2.style.flex="2 1 320px"; f2.style.minWidth="260px";
-    const lab2=document.createElement("label"); lab2.textContent="紐づけ（複数可）";
-    const chips=document.createElement("div"); chips.className="chips";
-    FIM.links.forEach((ln, j)=>{
-      const c=document.createElement("label"); c.className="chip";
-      const cb=document.createElement("input"); cb.type="checkbox"; cb.id=`fim_m_${idx}_ln_${j}`;
-      const sp=document.createElement("span"); sp.textContent=ln;
-      c.append(cb, sp);
-      chips.appendChild(c);
-    });
-    f2.appendChild(lab2); f2.appendChild(chips);
-
-    // aids sub-options when 補助具 checked
-    const sub=document.createElement("div"); sub.className="sub";
-    const aidsWrap=document.createElement("div"); aidsWrap.className="chips";
-    const aidLabel=document.createElement("div"); aidLabel.className="mini"; aidLabel.textContent="補助具（複数可）";
-    sub.appendChild(aidLabel);
-    FIM.aids.forEach((a, k)=>{
-      const c=document.createElement("label"); c.className="chip";
-      const cb=document.createElement("input"); cb.type="checkbox"; cb.id=`fim_m_${idx}_aid_${k}`;
-      const sp=document.createElement("span"); sp.textContent=a;
-      c.append(cb, sp);
-      aidsWrap.appendChild(c);
-    });
-    const other=document.createElement("div"); other.className="field"; other.style.minWidth="220px";
-    const otherLab=document.createElement("label"); otherLab.textContent="補助具：その他（自由記載）";
-    const otherInp=document.createElement("input"); otherInp.id=`fim_m_${idx}_aid_other`; otherInp.placeholder="例：四点杖 / 手すり / など";
-    other.appendChild(otherLab); other.appendChild(otherInp);
-
-    sub.appendChild(aidsWrap);
-    sub.appendChild(other);
-    f2.appendChild(sub);
-
-    box.appendChild(row);
-    mWrap.appendChild(box);
-
-    // listeners for KPI
-    sel.addEventListener("change", refreshFimKpi);
-    // link & aid change
-    box.querySelectorAll("input,select").forEach(el=>{
-      el.addEventListener("change", refreshFimKpi);
-      el.addEventListener("input", refreshFimKpi);
-    });
-  });
-
-  // Cognitive
-  const cWrap = $("fimCognitive");
-  cWrap.innerHTML="";
-  FIM.cognitive.forEach((name, idx)=>{
-    const box=document.createElement("div");
-    box.className="card";
-    box.style.boxShadow="none";
-    box.style.marginBottom="10px";
-
-    const f=document.createElement("div"); f.className="field"; f.style.minWidth="220px";
-    const lab=document.createElement("label"); lab.textContent = `${idx+1}. ${name}`;
-    const sel=scoreSelect7();
-    sel.id = `fim_c_${idx}`;
-    f.appendChild(lab); f.appendChild(sel);
-    box.appendChild(f);
-    cWrap.appendChild(box);
-
-    sel.addEventListener("change", refreshFimKpi);
-  });
-
-  refreshFimKpi();
-}
-
-function getFimSums(){
-  let motor = 0, cognitive = 0;
-  let motorAny=false, cogAny=false;
-
-  for(let i=0;i<FIM.motor.length;i++){
-    const v = safeNum($(`fim_m_${i}`).value);
-    if(v!==null){ motor += v; motorAny=true; }
-  }
-  for(let i=0;i<FIM.cognitive.length;i++){
-    const v = safeNum($(`fim_c_${i}`).value);
-    if(v!==null){ cognitive += v; cogAny=true; }
-  }
-  return { motor, cognitive, motorAny, cogAny };
-}
-function refreshFimKpi(){
-  const s = getFimSums();
-  const motorText = s.motorAny ? String(s.motor) : "-";
-  const cogText = s.cogAny ? String(s.cognitive) : "-";
-  $("kpiFim").textContent = `${motorText} / ${cogText}`;
-}
-
-/* =========================
-   Custom fields config
-========================= */
-const DEFAULT_CONFIG = [
-  // example placeholder (empty by default)
-];
-
-let customConfig = [];
-
-function loadCustomConfig(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEYS.customConfig);
-    if(!raw){ customConfig = [...DEFAULT_CONFIG]; return; }
-    const parsed = JSON.parse(raw);
-    if(Array.isArray(parsed)) customConfig = parsed;
-    else customConfig = [...DEFAULT_CONFIG];
-  }catch{
-    customConfig = [...DEFAULT_CONFIG];
-  }
-}
-function saveCustomConfig(){
-  localStorage.setItem(STORAGE_KEYS.customConfig, JSON.stringify(customConfig));
-}
-
-function renderCustomFields(){
-  const root = $("customFields");
-  root.innerHTML = "";
-  if(customConfig.length === 0){
-    const p=document.createElement("div");
-    p.className="mini";
-    p.textContent="（カスタム項目がありません。『項目追加』で作成できます）";
-    root.appendChild(p);
-    return;
+  function cfgToast(msg, ok=true){
+    const el = $("cfg_status");
+    el.textContent = msg;
+    el.style.color = ok ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
+    setTimeout(()=>{ el.textContent=""; el.style.color=""; }, 3000);
   }
 
-  customConfig.forEach((item, idx)=>{
-    const box=document.createElement("div");
-    box.className="card";
-    box.style.boxShadow="none";
-    box.style.marginBottom="10px";
-
-    const top=document.createElement("div");
-    top.className="row";
-
-    const f1=document.createElement("div"); f1.className="field"; f1.style.minWidth="220px";
-    const l1=document.createElement("label"); l1.textContent="ラベル";
-    const in1=document.createElement("input"); in1.value=item.label ?? "";
-    in1.addEventListener("input", ()=>{ item.label=in1.value; saveCustomConfig(); });
-    f1.append(l1,in1);
-
-    const f2=document.createElement("div"); f2.className="field"; f2.style.minWidth="170px"; f2.style.flex="0 1 170px";
-    const l2=document.createElement("label"); l2.textContent="種類";
-    const sel=document.createElement("select");
-    ["text","textarea","select"].forEach(t=>{
-      const op=document.createElement("option"); op.value=t; op.textContent=t;
-      sel.appendChild(op);
-    });
-    sel.value=item.type ?? "text";
-    sel.addEventListener("change", ()=>{
-      item.type=sel.value;
-      if(item.type!=="select") item.options = item.options ?? [];
-      saveCustomConfig();
-      renderCustomFields();
-    });
-    f2.append(l2,sel);
-
-    const f3=document.createElement("div"); f3.className="field"; f3.style.flex="0 1 260px"; f3.style.minWidth="220px";
-    const l3=document.createElement("label"); l3.textContent="並び替え/削除";
-    const btnRow=document.createElement("div"); btnRow.className="row";
-    const up=btnMini("↑", ()=>{ if(idx>0){ [customConfig[idx-1],customConfig[idx]]=[customConfig[idx],customConfig[idx-1]]; saveCustomConfig(); renderCustomFields(); }});
-    const dn=btnMini("↓", ()=>{ if(idx<customConfig.length-1){ [customConfig[idx+1],customConfig[idx]]=[customConfig[idx],customConfig[idx+1]]; saveCustomConfig(); renderCustomFields(); }});
-    const del=btnMini("削除", ()=>{ customConfig.splice(idx,1); saveCustomConfig(); renderCustomFields(); });
-    btnRow.append(up,dn,del);
-    f3.append(l3,btnRow);
-
-    top.append(f1,f2,f3);
-    box.appendChild(top);
-
-    if(sel.value==="select"){
-      const optField=document.createElement("div");
-      optField.className="field";
-      const lab=document.createElement("label"); lab.textContent="選択肢（カンマ区切り）";
-      const inp=document.createElement("input"); inp.value=(item.options??[]).join(",");
-      inp.placeholder="例：A,B,C";
-      inp.addEventListener("input", ()=>{
-        item.options = inp.value.split(",").map(s=>s.trim()).filter(Boolean);
-        saveCustomConfig();
-        renderCustomFields();
-      });
-      optField.append(lab,inp);
-      box.appendChild(optField);
-    }
-
-    // input area (not saved)
-    const valField=document.createElement("div");
-    valField.className="field";
-    const labv=document.createElement("label"); labv.textContent=`入力：${item.label ?? "（未設定）"}`;
-    const key = `custom_val_${idx}`;
-    let input;
-    if(item.type==="textarea"){
-      input=document.createElement("textarea");
-      input.placeholder="ここに入力（患者データは保存しません）";
-    }else if(item.type==="select"){
-      input=document.createElement("select");
-      const op0=document.createElement("option"); op0.value=""; op0.textContent="未選択";
-      input.appendChild(op0);
-      (item.options??[]).forEach(o=>{
-        const op=document.createElement("option"); op.value=o; op.textContent=o;
-        input.appendChild(op);
-      });
-    }else{
-      input=document.createElement("input");
-      input.placeholder="ここに入力（患者データは保存しません）";
-    }
-    input.id = key;
-    valField.append(labv, input);
-    box.appendChild(valField);
-
-    root.appendChild(box);
-  });
-}
-
-function btnMini(text, onClick){
-  const b=document.createElement("button");
-  b.className="btn small";
-  b.type="button";
-  b.textContent=text;
-  b.addEventListener("click", onClick);
-  return b;
-}
-
-function addCustom(){
-  customConfig.push({ label:"新規項目", type:"text", options:[] });
-  saveCustomConfig();
-  renderCustomFields();
-}
-
-function exportConfig(){
-  const blob = new Blob([JSON.stringify(customConfig, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url;
-  a.download="config.json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-function importConfig(file){
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const parsed = JSON.parse(reader.result);
-      if(!Array.isArray(parsed)) throw new Error("not array");
-      customConfig = parsed;
-      saveCustomConfig();
-      renderCustomFields();
-      alert("config.jsonを読み込みました（設定のみ保存されます）。");
-    }catch(e){
-      alert("読み込みに失敗しました（config.json形式を確認してください）。");
-    }
-  };
-  reader.readAsText(file);
-}
-
-/* =========================
-   Summary generation (SOAP-ish)
-   - Required: show FIM totals + HDS total at top
-   - No duplicate output
-   - Omit unselected/empty fields
-========================= */
-function generateSummary(){
-  // required caseID
-  const caseId = clean($("caseId").value);
-  if(!caseId){
-    alert("ケースIDは必須です（個人情報は入力しません）。");
-    $("caseId").focus();
-    return;
-  }
-
-  // Always recompute FIM & HDS & GCS (B方式)
-  const fim = getFimSummary();
-  const hds = getHdsSummary();
-  const gcs = computeGcs();
-
-  const lines = [];
-
-  // Header
-  const date = clean($("caseDate").value);
-  const memo = clean($("caseMemo").value);
-  lines.push(`【ケース】${caseId}${date ? `（${date}）` : ""}${memo ? ` / ${memo}` : ""}`);
-
-  // Top scores (must)
-  lines.push(`【スコア】FIM：運動${fim.totals.motorText} / 認知${fim.totals.cogText}　｜　HDS-R：${hds.totalText} / 30${gcs ? `　｜　GCS：${gcs.total} / 15` : ""}`);
-
-  // Motivation + vitals + GCS
-  const mot = clean($("motivation").value);
-  const bp = clean($("vitalBp").value);
-  const hr = clean($("vitalHr").value);
-  const spo2 = clean($("vitalSpo2").value);
-  const o2use = clean($("o2Use").value);
-  const o2flow = clean($("o2Flow").value);
-
-  const caseBullets = [];
-  if(mot) caseBullets.push(`リハ意欲：${mot}`);
-  const vitParts = [];
-  if(bp) vitParts.push(`BP ${bp}`);
-  if(hr) vitParts.push(`HR ${hr}`);
-  if(spo2) vitParts.push(`SpO₂ ${spo2}`);
-  if(o2use){
-    if(o2use==="あり"){
-      vitParts.push(`O₂ あり${o2flow ? `（${o2flow}L）` : ""}`);
-    }else{
-      vitParts.push(`O₂ なし`);
-    }
-  }
-  if(vitParts.length) caseBullets.push(`バイタル：${vitParts.join(" / ")}`);
-  if(gcs) caseBullets.push(`意識：GCS E${gcs.e} V${gcs.v} M${gcs.m}（${gcs.total}/15）`);
-  if(caseBullets.length){
-    lines.push("");
-    lines.push(section("【初期状況】", bulletize(caseBullets)));
-  }
-
-  // ＜I＞ 情報
-  const infoBullets = [];
-  const cohab = clean($("cohab").value);
-  const caregiver = clean($("caregiver").value);
-  const keyperson = clean($("keyperson").value);
-  if(cohab) infoBullets.push(`同居：${cohab}`);
-  if(caregiver) infoBullets.push(`主介護者：${caregiver}`);
-  if(keyperson) infoBullets.push(`キーパーソン：${keyperson}`);
-
-  const housing = clean($("housingType").value);
-  const stairs = clean($("stairs").value);
-  const toiletEnv = clean($("toiletEnv").value);
-  if(housing) infoBullets.push(`住居：${housing}`);
-  if(stairs) infoBullets.push(`階段/段差：${stairs}`);
-  if(toiletEnv) infoBullets.push(`トイレ環境：${toiletEnv}`);
-
-  const ltci = clean($("ltci").value);
-  const careLevel = clean($("careLevel").value);
-  const services = clean($("services").value);
-  const serviceStatus = clean($("serviceStatus").value);
-  const supportMemo = clean($("supportMemo").value);
-  if(ltci) infoBullets.push(`介護保険：${ltci}${careLevel ? `（${careLevel}）` : ""}`);
-  if(services) infoBullets.push(`サービス：${services}`);
-  if(serviceStatus) infoBullets.push(`サービス状況：${serviceStatus}`);
-  if(supportMemo) infoBullets.push(`支援資源メモ：${supportMemo}`);
-
-  if(infoBullets.length){
-    lines.push("");
-    lines.push(section("【＜I＞情報】", bulletize(infoBullets)));
-  }
-
-  // ＜O＞ 評価（起居＋所見）
-  const objBullets = [];
-  const bm = [];
-  addIfSelected(bm, "寝返り", $("bedRoll").value);
-  addIfSelected(bm, "起き上がり", $("bedUp").value);
-  addIfSelected(bm, "座位保持", $("sitHold").value);
-  addIfSelected(bm, "立ち上がり", $("standUp").value);
-  if(bm.length) objBullets.push(`起居：${bm.join(" / ")}`);
-
-  const palsy = clean($("palsy").value);
-  const rom = clean($("rom").value);
-  const sens = clean($("sens").value);
-  const painYn = clean($("painYn").value);
-  const painSite = clean($("painSite").value);
-  const findings = [];
-  if(palsy) findings.push(`麻痺：${palsy}`);
-  if(rom) findings.push(`ROM：${rom}`);
-  if(sens) findings.push(`感覚：${sens}`);
-  if(painYn){
-    findings.push(`疼痛：${painYn}${painYn==="あり" && painSite ? `（${painSite}）` : ""}`);
-  }else if(painSite){
-    findings.push(`疼痛部位：${painSite}`);
-  }
-  if(findings.length) objBullets.push(`所見：${findings.join(" / ")}`);
-
-  // Toileting
-  const tBullets = [];
-  const moveMethod = clean($("toiletMoveMethod").value);
-  const moveAssist = clean($("toiletMoveAssist").value);
-  if(moveMethod || moveAssist){
-    tBullets.push(`移動（ベッド→トイレ）：${[moveMethod, moveAssist].filter(Boolean).join(" / ")}`);
-  }
-  const tIn = [];
-  addIfSelected(tIn, "移乗", $("toiletTransfer").value);
-  addIfSelected(tIn, "下衣操作", $("toiletCloth").value);
-  addIfSelected(tIn, "着座", $("toiletSit").value);
-  addIfSelected(tIn, "後始末", $("toiletClean").value);
-  if(tIn.length) tBullets.push(`トイレ内：${tIn.join(" / ")}`);
-
-  const uu = clean($("urgeUrine").value);
-  const uTell = clean($("urgeUrineTell").value);
-  const bu = clean($("urgeBowel").value);
-  const bTell = clean($("urgeBowelTell").value);
-  const urge = [];
-  if(uu) urge.push(`尿意：${uu}${uTell ? `（訴え：${uTell}）` : ""}`);
-  if(bu) urge.push(`便意：${bu}${bTell ? `（訴え：${bTell}）` : ""}`);
-  if(urge.length) tBullets.push(urge.join(" / "));
-  if(tBullets.length) objBullets.push(`トイレ：${tBullets.join(" / ")}`);
-
-  if(objBullets.length){
-    lines.push("");
-    lines.push(section("【＜O＞評価】", bulletize(objBullets)));
-  }
-
-  // HDS breakdown (must include item scores when any)
-  if(hds.any){
-    lines.push("");
-    lines.push(section("【HDS-R 内訳】", bulletize(hds.breakdownLines)));
-  }
-
-  // FIM entered items only (motor + cognitive)
-  const fimLines = [];
-  fim.motorLines.forEach(x=>fimLines.push(x));
-  fim.cogLines.forEach(x=>fimLines.push(x));
-  if(fimLines.length){
-    lines.push("");
-    lines.push(section("【FIM（入力項目のみ）】", bulletize(fimLines)));
-  }
-
-  // Custom fields (values only; no saving)
-  const cLines = getCustomSummaryLines();
-  if(cLines.length){
-    lines.push("");
-    lines.push(section("【カスタム項目】", bulletize(cLines)));
-  }
-
-  const out = lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
-  $("summaryOut").textContent = out;
-}
-
-function addIfSelected(arr, label, value){
-  const v = clean(value);
-  if(v) arr.push(`${label}${label ? "：" : ""}${v}`);
-}
-
-function getHdsSummary(){
-  const any = anySelectedHds();
-  const total = $("hdsTotal").textContent;
-  const totalText = (any && total !== "-") ? total : "-";
-
-  // item scores from cells (includes suffix)
-  const s1 = $("hds_s1").textContent;
-  const s2 = $("hds_s2").textContent;
-  const s3 = $("hds_s3").textContent;
-  const s4 = $("hds_s4").textContent;
-  const s5 = $("hds_s5").textContent;
-  const s6 = $("hds_s6").textContent;
-  const s7 = $("hds_s7").textContent;
-  const s8 = $("hds_s8").textContent;
-  const s9 = $("hds_s9").textContent;
-
-  const breakdownLines = [];
-  if(any){
-    breakdownLines.push(`Q1：${s1}`);
-    breakdownLines.push(`Q2：${s2}`); // includes year/month/day/week
-    breakdownLines.push(`Q3：${s3}`);
-    breakdownLines.push(`Q4：${s4}`); // includes 3-word
-    breakdownLines.push(`Q5：${s5}`);
-    breakdownLines.push(`Q6：${s6}`);
-    breakdownLines.push(`Q7：${s7}`); // includes 3-word
-    breakdownLines.push(`Q8：${s8}`);
-    breakdownLines.push(`Q9：${s9}`);
-  }
-  return { any, totalText, breakdownLines };
-}
-
-function getFimSummary(){
-  const sums = getFimSums();
-  const totals = {
-    motorText: sums.motorAny ? String(sums.motor) : "-",
-    cogText: sums.cogAny ? String(sums.cognitive) : "-"
-  };
-
-  const motorLines = [];
-  for(let i=0;i<FIM.motor.length;i++){
-    const score = safeNum($(`fim_m_${i}`).value);
-    if(score===null) continue;
-    const name = FIM.motor[i];
-
-    // links checked
-    const linkChecked = [];
-    for(let j=0;j<FIM.links.length;j++){
-      const cb = $(`fim_m_${i}_ln_${j}`);
-      if(cb && cb.checked) linkChecked.push(FIM.links[j]);
-    }
-
-    // aids checked
-    const aidChecked = [];
-    for(let k=0;k<FIM.aids.length;k++){
-      const cb = $(`fim_m_${i}_aid_${k}`);
-      if(cb && cb.checked) aidChecked.push(FIM.aids[k]);
-    }
-    const aidOther = clean($(`fim_m_${i}_aid_other`).value);
-    if(aidOther) aidChecked.push(`その他：${aidOther}`);
-
-    // If 補助具 is not checked in links, but aids exist, still show aids in parentheses
-    let noteParts = [];
-    if(linkChecked.length) noteParts.push(linkChecked.join("、"));
-    if(aidChecked.length) noteParts.push(`補助具：${aidChecked.join("、")}`);
-    const note = noteParts.length ? `（${noteParts.join(" / ")}）` : "";
-
-    motorLines.push(`${name}：${score}${note}`);
-  }
-
-  const cogLines = [];
-  for(let i=0;i<FIM.cognitive.length;i++){
-    const score = safeNum($(`fim_c_${i}`).value);
-    if(score===null) continue;
-    cogLines.push(`${FIM.cognitive[i]}：${score}`);
-  }
-
-  return { totals, motorLines, cogLines };
-}
-
-function getCustomSummaryLines(){
-  const lines=[];
-  customConfig.forEach((item, idx)=>{
-    const label = clean(item.label);
-    if(!label) return;
-    const el = $(`custom_val_${idx}`);
-    if(!el) return;
-    const v = clean(el.value);
-    if(!v) return;
-    lines.push(`${label}：${v}`);
-  });
-  return lines;
-}
-
-/* =========================
-   Copy / Mail / Clear
-========================= */
-async function copySummary(){
-  const text = $("summaryOut").textContent;
-  if(!hasValue(text) || text==="（未生成）"){
-    alert("先に『要約生成』を押してください。");
-    return;
-  }
-  try{
-    await navigator.clipboard.writeText(text);
-    alert("コピーしました。");
-  }catch{
-    // fallback
-    const ta=document.createElement("textarea");
-    ta.value=text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    alert("コピーしました。");
-  }
-}
-
-function mailSummary(){
-  const to = clean($("mailTo").value) || clean(localStorage.getItem(STORAGE_KEYS.mailTo) || "");
-  if(!to){
-    alert("送信先メールを設定してください（設定→宛先保存）。");
-    return;
-  }
-  const text = $("summaryOut").textContent;
-  if(!hasValue(text) || text==="（未生成）"){
-    alert("先に『要約生成』を押してください。");
-    return;
-  }
-  const caseId = clean($("caseId").value) || "case";
-  const subject = encodeURIComponent(`初期評価（${caseId}）`);
-  const body = encodeURIComponent(text);
-  const url = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
-  window.location.href = url;
-}
-
-function clearAll(){
-  if(!confirm("入力内容をクリアします（患者データは保存されません）。OK？")) return;
-
-  // Clear inputs/selects/textareas except settings and theme and config.
-  const keepIds = new Set(["mailTo"]);
-  const all = document.querySelectorAll("input,select,textarea");
-  all.forEach(el=>{
-    if(keepIds.has(el.id)) return;
-    // file input should be cleared too
-    if(el.type==="checkbox") el.checked=false;
-    else el.value="";
-  });
-
-  // Restore saved mailTo into field
-  const saved = localStorage.getItem(STORAGE_KEYS.mailTo);
-  if(saved) $("mailTo").value = saved;
-
-  refreshHds();
-  refreshFimKpi();
-  refreshGcsKpi();
-  $("summaryOut").textContent="（未生成）";
-}
-
-function saveMailTo(){
-  const v = clean($("mailTo").value);
-  if(!v){
-    localStorage.removeItem(STORAGE_KEYS.mailTo);
-    alert("宛先を削除しました。");
-    return;
-  }
-  localStorage.setItem(STORAGE_KEYS.mailTo, v);
-  alert("宛先を保存しました。");
-}
-
-/* =========================
-   Events & init
-========================= */
-function init(){
   // Theme
-  const savedTheme = localStorage.getItem(STORAGE_KEYS.theme) || "light";
-  setTheme(savedTheme);
+  function setTheme(t){
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem(THEME_KEY, t);
+    $("btn_theme").textContent = (t==="dark") ? "淡色に戻す" : "ダーク切替";
+  }
+  function initTheme(){
+    const saved = localStorage.getItem(THEME_KEY);
+    if(saved==="dark" || saved==="light") setTheme(saved);
+    $("btn_theme").addEventListener("click", ()=>{
+      const cur = document.documentElement.getAttribute("data-theme") || "light";
+      setTheme(cur==="light" ? "dark" : "light");
+    });
+  }
 
-  $("btnTheme").addEventListener("click", toggleTheme);
+  // Mail
+  function getMailTo(){ return (localStorage.getItem(MAIL_KEY) || "").trim(); }
+  function setMailTo(v){ localStorage.setItem(MAIL_KEY, (v||"").trim()); }
+  function clearMailTo(){ localStorage.removeItem(MAIL_KEY); }
+  function initMailSetting(){
+    const saved = getMailTo();
+    const input = $("mail_to");
+    const status = $("mail_status");
+    input.value = saved;
+    status.textContent = saved ? "設定済み（変更可能）" : "未設定：宛先を保存してください";
+    status.style.color = saved ? "rgba(22,163,74,.95)" : "rgba(239,68,68,.95)";
 
-  // Load settings (mailTo)
-  const savedMail = localStorage.getItem(STORAGE_KEYS.mailTo);
-  if(savedMail) $("mailTo").value = savedMail;
+    $("btn_mail_save").addEventListener("click", ()=>{
+      const v = trim(input.value);
+      if(!v || !v.includes("@")){
+        status.textContent = "メールアドレスを入力してください";
+        status.style.color = "rgba(239,68,68,.95)";
+        return;
+      }
+      setMailTo(v);
+      status.textContent = "保存しました（変更可能）";
+      status.style.color = "rgba(22,163,74,.95)";
+      toast("宛先を保存しました。");
+    });
 
-  // Custom config
-  loadCustomConfig();
-  renderCustomFields();
+    $("btn_mail_clear").addEventListener("click", ()=>{
+      clearMailTo();
+      input.value = "";
+      status.textContent = "クリアしました（未設定）";
+      status.style.color = "rgba(239,68,68,.95)";
+      toast("宛先をクリアしました。");
+    });
+  }
 
-  $("btnAddCustom").addEventListener("click", addCustom);
-  $("btnExportConfig").addEventListener("click", exportConfig);
-  $("fileImportConfig").addEventListener("change", (e)=>{
-    const f = e.target.files?.[0];
-    if(f) importConfig(f);
-    e.target.value="";
-  });
+  // Select helpers
+  function fillSelect(id, options){
+    const el = $(id);
+    el.innerHTML = "";
+    options.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v; opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
+  function makeChecks(containerId, items){
+    const wrap = $(containerId);
+    wrap.innerHTML = "";
+    items.forEach(it=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const inp = document.createElement("input");
+      inp.type = "checkbox";
+      inp.id = it.id;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(it.label));
+      wrap.appendChild(lab);
+    });
+  }
+  function readCheckLabelsFromContainer(containerId){
+    const c = document.getElementById(containerId);
+    if(!c) return [];
+    return Array.from(c.querySelectorAll("input[type=checkbox]"))
+      .filter(cb=>cb.checked)
+      .map(cb => cb.parentElement.textContent.trim());
+  }
 
-  // HDS / FIM init
-  initHds();
-  initFim();
+  // Static option sets（前回を完全維持）
+  const optDischarge = [{v:"",t:"未選択"},{v:"home",t:"自宅"},{v:"facility",t:"施設"},{v:"transfer",t:"転院"},{v:"undecided",t:"未定"}];
+  const optLiving = [{v:"",t:"未選択"},{v:"alone",t:"独居"},{v:"with_family",t:"同居"},{v:"other",t:"その他"},{v:"unknown",t:"未確認"}];
+  const optCaregiver = [{v:"",t:"未選択"},{v:"spouse",t:"配偶者"},{v:"child",t:"子"},{v:"family",t:"同居家族"},{v:"none",t:"不在"},{v:"unknown",t:"未確認"},{v:"other",t:"その他"}];
+  const optFreq = [{v:"",t:"未選択"},{v:"daily",t:"毎日"},{v:"few_per_week",t:"週数回"},{v:"monthly",t:"月数回"},{v:"none",t:"ほぼなし"},{v:"unknown",t:"未確認"}];
+  const optWish = [{v:"",t:"未選択"},{v:"home",t:"自宅希望"},{v:"facility",t:"施設希望"},{v:"undecided",t:"未定"},{v:"anxious",t:"不安強い"},{v:"other",t:"その他"}];
+  const optHousing = [{v:"",t:"未選択"},{v:"house",t:"戸建"},{v:"apartment",t:"集合住宅"},{v:"unknown",t:"未確認"}];
+  const optYesNo = [{v:"",t:"未選択"},{v:"yes",t:"あり"},{v:"no",t:"なし"},{v:"unknown",t:"未確認"}];
+  const optBedroom = [{v:"",t:"未選択"},{v:"1f",t:"1F"},{v:"2f",t:"2F"},{v:"undecided",t:"未定"},{v:"unknown",t:"未確認"}];
+  const optToilet = [{v:"",t:"未選択"},{v:"same",t:"同階"},{v:"other",t:"別階"},{v:"unknown",t:"未確認"}];
+  const optEntrance = [{v:"",t:"未選択"},{v:"high",t:"あり（大きめ）"},{v:"low",t:"少なめ"},{v:"unknown",t:"未確認"}];
+  const optLTC = [{v:"",t:"未選択"},{v:"none",t:"未申請"},{v:"applying",t:"申請中"},{v:"certified",t:"認定あり"},{v:"unknown",t:"未確認"}];
+  const optOutpt = [{v:"",t:"未選択"},{v:"possible",t:"可能"},{v:"difficult",t:"困難"},{v:"unknown",t:"未確認"}];
 
-  // GCS KPI
-  ["gcsE","gcsV","gcsM"].forEach(id=>{
-    $(id).addEventListener("change", refreshGcsKpi);
-  });
-  refreshGcsKpi();
+  const bathroomItems = [
+    {id:"bath_high_step", label:"浴槽跨ぎが高い"},
+    {id:"bath_no_handrail", label:"手すりなし"},
+    {id:"bath_narrow", label:"狭い"},
+    {id:"bath_unknown", label:"未確認"}
+  ];
+  const deviceItems = [
+    {id:"dev_cane", label:"杖"},
+    {id:"dev_walker", label:"歩行器"},
+    {id:"dev_wheelchair", label:"車椅子"},
+    {id:"dev_handrail", label:"手すり"},
+    {id:"dev_shower_chair", label:"シャワーチェア"},
+    {id:"dev_raised_toilet", label:"補高便座"},
+    {id:"dev_bed", label:"介護ベッド"},
+    {id:"dev_none", label:"なし"},
+    {id:"dev_unknown", label:"未確認"}
+  ];
+  const serviceItems = [
+    {id:"svc_home_nursing", label:"訪看"},
+    {id:"svc_home_rehab", label:"訪リハ"},
+    {id:"svc_day_service", label:"デイ"},
+    {id:"svc_helper", label:"ヘルパー"},
+    {id:"svc_meal", label:"配食"},
+    {id:"svc_none", label:"なし"},
+    {id:"svc_unknown", label:"未確認"}
+  ];
 
-  // buttons
-  $("btnGenerate").addEventListener("click", generateSummary);
-  $("btnCopy").addEventListener("click", copySummary);
-  $("btnMail").addEventListener("click", mailSummary);
-  $("btnClear").addEventListener("click", clearAll);
-  $("btnSaveMail").addEventListener("click", saveMailTo);
+  // Bed select
+  const bedOptions = [
+    {v:"", t:"未選択"},
+    {v:"自立", t:"自立"},
+    {v:"支持物で可", t:"支持物で可"},
+    {v:"見守り", t:"見守り"},
+    {v:"一部介助", t:"一部介助"},
+    {v:"全介助", t:"全介助"},
+    {v:"不可", t:"不可"}
+  ];
+  function fillBedSelect(id){
+    const el = $(id);
+    el.innerHTML = "";
+    bedOptions.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v; opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
 
-  // Update KPIs on relevant inputs (does not store data)
-  ["caseId","caseDate","caseMemo","motivation","vitalBp","vitalHr","vitalSpo2","o2Use","o2Flow"].forEach(id=>{
-    $(id).addEventListener("input", ()=>{ /* no-op */ });
-    $(id).addEventListener("change", ()=>{ /* no-op */ });
-  });
-}
-document.addEventListener("DOMContentLoaded", init);
+  // ===== 追加：意欲・O2・トイレ詳細・GCS =====
+  const optMotivation = [
+    {v:"", t:"未選択"},
+    {v:"あり", t:"あり"},
+    {v:"なし", t:"なし"},
+    {v:"無気力", t:"無気力"},
+    {v:"拒否", t:"拒否"}
+  ];
+  const optO2 = [
+    {v:"", t:"未選択"},
+    {v:"なし", t:"なし"},
+    {v:"あり", t:"あり"}
+  ];
+  const optToMoveMethod = [
+    {v:"", t:"未選択"},
+    {v:"独歩", t:"独歩"},
+    {v:"杖歩行", t:"杖歩行"},
+    {v:"歩行器", t:"歩行器"},
+    {v:"老人車", t:"老人車"},
+    {v:"車いす", t:"車いす"}
+  ];
+  const optAssist4 = [
+    {v:"", t:"未選択"},
+    {v:"自立", t:"自立"},
+    {v:"見守り", t:"見守り"},
+    {v:"一部介助", t:"一部介助"},
+    {v:"全介助", t:"全介助"}
+  ];
+  const optUrge = [
+    {v:"", t:"未選択"},
+    {v:"あり", t:"あり"},
+    {v:"なし", t:"なし"},
+    {v:"不明", t:"不明"}
+  ];
+  const optTell = [
+    {v:"", t:"未選択"},
+    {v:"可能", t:"可能"},
+    {v:"困難", t:"困難"},
+    {v:"不明", t:"不明"}
+  ];
+  const optGcsE = [
+    {v:"",t:"未選択"},
+    {v:"4",t:"E4 自発"},
+    {v:"3",t:"E3 呼びかけ"},
+    {v:"2",t:"E2 痛み"},
+    {v:"1",t:"E1 なし"}
+  ];
+  const optGcsV = [
+    {v:"",t:"未選択"},
+    {v:"5",t:"V5 見当識あり"},
+    {v:"4",t:"V4 混乱"},
+    {v:"3",t:"V3 不適切語"},
+    {v:"2",t:"V2 理解不能音"},
+    {v:"1",t:"V1 なし"}
+  ];
+  const optGcsM = [
+    {v:"",t:"未選択"},
+    {v:"6",t:"M6 命令に従う"},
+    {v:"5",t:"M5 疼痛局在"},
+    {v:"4",t:"M4 逃避"},
+    {v:"3",t:"M3 屈曲"},
+    {v:"2",t:"M2 伸展"},
+    {v:"1",t:"M1 なし"}
+  ];
+
+  function numOrNull(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  function updateGcs(){
+    const e = numOrNull($("gcs_e").value);
+    const v = numOrNull($("gcs_v").value);
+    const m = numOrNull($("gcs_m").value);
+    if(e===null || v===null || m===null){
+      $("gcs_total").textContent = "-";
+      $("gcs_total_top").textContent = "-";
+      return;
+    }
+    const total = e+v+m;
+    $("gcs_total").textContent = String(total);
+    $("gcs_total_top").textContent = String(total);
+  }
+
+  // FIM options（前回維持）
+  const fimOptions = [
+    {v:"",  t:"未選択"},
+    {v:"7", t:"7 完全自立"},
+    {v:"6", t:"6 修正自立（装置・時間等）"},
+    {v:"5", t:"5 見守り／準備／口頭指示"},
+    {v:"4", t:"4 最小介助"},
+    {v:"3", t:"3 中等度介助"},
+    {v:"2", t:"2 最大介助"},
+    {v:"1", t:"1 全介助"}
+  ];
+  function fillFimSelect(el){
+    el.innerHTML = "";
+    fimOptions.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.v; opt.textContent = o.t;
+      el.appendChild(opt);
+    });
+  }
+
+  // FIM items（前回維持）
+  const fimMotorItems = [
+    {id:"eating", label:"食事"},
+    {id:"grooming", label:"整容"},
+    {id:"bathing", label:"清拭/入浴"},
+    {id:"dressing_upper", label:"更衣（上）"},
+    {id:"dressing_lower", label:"更衣（下）"},
+    {id:"toileting", label:"トイレ動作"},
+    {id:"bladder", label:"排尿管理"},
+    {id:"bowel", label:"排便管理"},
+    {id:"transfer_bed", label:"移乗（ベッド）"},
+    {id:"transfer_toilet", label:"移乗（トイレ）"},
+    {id:"transfer_tub", label:"移乗（浴槽/シャワーチェア）"},
+    {id:"locomotion", label:"移動（歩行/車椅子）"},
+    {id:"stairs", label:"階段"}
+  ];
+  const fimCogItems = [
+    {id:"comprehension", label:"理解"},
+    {id:"expression", label:"表出"},
+    {id:"social", label:"社会的交流"},
+    {id:"problem_solving", label:"問題解決"},
+    {id:"memory", label:"記憶"}
+  ];
+
+  // Motor linking options（前回維持）
+  const neededOptions = [
+    {key:"watch_safety", label:"見守り（安全）"},
+    {key:"watch_sequence", label:"見守り（手順）"},
+    {key:"prep", label:"準備"},
+    {key:"handrail", label:"支持物"},
+    {key:"device", label:"補助具（下で選択）"},
+    {key:"time", label:"時間増大"},
+    {key:"fatigue", label:"疲労で低下"}
+  ];
+  const deviceSubOptions = [
+    {key:"cane", label:"杖"},
+    {key:"walker", label:"歩行器"},
+    {key:"cruising", label:"伝い歩き"},
+    {key:"rollator", label:"シルバーカー"},
+    {key:"other", label:"その他"}
+  ];
+
+  // Patient data only (NOT stored)
+  const fimNeededMap = {};
+  const fimDeviceMap = {};
+  const fimDeviceOtherText = {};
+
+  function makeMotorBlock(item){
+    const keyBase = `motor_${item.id}`;
+    fimNeededMap[keyBase] = fimNeededMap[keyBase] || new Set();
+    fimDeviceMap[keyBase] = fimDeviceMap[keyBase] || new Set();
+    fimDeviceOtherText[keyBase] = fimDeviceOtherText[keyBase] || "";
+
+    const div = document.createElement("div");
+    div.className = "fim-item";
+
+    const head = document.createElement("div");
+    head.className = "fim-head";
+
+    const title = document.createElement("div");
+    title.className = "fim-title";
+    title.textContent = item.label;
+
+    const scoreSel = document.createElement("select");
+    scoreSel.id = `fim_${keyBase}`;
+    fillFimSelect(scoreSel);
+    scoreSel.addEventListener("change", updateFimTotals);
+
+    head.appendChild(title);
+    head.appendChild(scoreSel);
+
+    const row = document.createElement("div");
+    row.className = "fim-row";
+
+    if(item.id === "locomotion"){
+      const modeBox = document.createElement("div");
+      const lab = document.createElement("label");
+      lab.textContent = "移動の方法";
+      const sel = document.createElement("select");
+      sel.id = "locomotion_mode";
+      sel.innerHTML = `
+        <option value="">未選択</option>
+        <option value="walk">歩行</option>
+        <option value="wheelchair">車椅子</option>
+        <option value="unknown">未確認</option>`;
+      modeBox.appendChild(lab);
+      modeBox.appendChild(sel);
+      row.appendChild(modeBox);
+    }else{
+      const ph = document.createElement("div");
+      ph.innerHTML = `<div class="mini">　</div>`;
+      row.appendChild(ph);
+    }
+
+    const neededWrap = document.createElement("div");
+    neededWrap.innerHTML = `<label>この項目で必要だったもの</label>`;
+    const neededLine = document.createElement("div");
+    neededLine.className = "fim-needed";
+
+    const deviceBox = document.createElement("div");
+    deviceBox.className = "subcard";
+    deviceBox.style.display = "none";
+    deviceBox.innerHTML = `<div class="mini" style="margin-bottom:6px;">補助具（複数可）</div>`;
+    const devLine = document.createElement("div");
+    devLine.className = "chkline";
+
+    const deviceOtherInput = document.createElement("input");
+    deviceOtherInput.type = "text";
+    deviceOtherInput.placeholder = "その他の補助具（任意）";
+    deviceOtherInput.style.marginTop = "8px";
+    deviceOtherInput.style.display = "none";
+    deviceOtherInput.addEventListener("input", ()=>{
+      fimDeviceOtherText[keyBase] = trim(deviceOtherInput.value);
+    });
+
+    deviceSubOptions.forEach(d=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", ()=>{
+        if(cb.checked) fimDeviceMap[keyBase].add(d.key);
+        else fimDeviceMap[keyBase].delete(d.key);
+        deviceOtherInput.style.display = fimDeviceMap[keyBase].has("other") ? "block" : "none";
+      });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(d.label));
+      devLine.appendChild(lab);
+    });
+
+    deviceBox.appendChild(devLine);
+    deviceBox.appendChild(deviceOtherInput);
+
+    neededOptions.forEach(opt=>{
+      const lab = document.createElement("label");
+      lab.className = "chk";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", ()=>{
+        if(cb.checked) fimNeededMap[keyBase].add(opt.key);
+        else fimNeededMap[keyBase].delete(opt.key);
+
+        if(opt.key === "device"){
+          deviceBox.style.display = cb.checked ? "block" : "none";
+          if(!cb.checked){
+            fimDeviceMap[keyBase] = new Set();
+            fimDeviceOtherText[keyBase] = "";
+            deviceBox.querySelectorAll("input[type=checkbox]").forEach(x=> x.checked=false);
+            deviceOtherInput.value = "";
+            deviceOtherInput.style.display = "none";
+          }
+        }
+      });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(opt.label));
+      neededLine.appendChild(lab);
+    });
+
+    neededWrap.appendChild(neededLine);
+    neededWrap.appendChild(deviceBox);
+    row.appendChild(neededWrap);
+
+    div.appendChild(head);
+    div.appendChild(row);
+    return div;
+  }
+
+  function makeCogBlock(item){
+    const div = document.createElement("div");
+    div.className = "fim-item";
+    const head = document.createElement("div");
+    head.className = "fim-head";
+    const title = document.createElement("div");
+    title.className = "fim-title";
+    title.textContent = item.label;
+
+    const scoreSel = document.createElement("select");
+    scoreSel.id = `fim_cog_${item.id}`;
+    fillFimSelect(scoreSel);
+    scoreSel.addEventListener("change", updateFimTotals);
+
+    head.appendChild(title);
+    head.appendChild(scoreSel);
+    div.appendChild(head);
+    return div;
+  }
+
+  function initFimUI(){
+    const motorWrap = $("fim_motor_wrap");
+    const cogWrap = $("fim_cog_wrap");
+    motorWrap.innerHTML = "";
+    cogWrap.innerHTML = "";
+    fimMotorItems.forEach(it=> motorWrap.appendChild(makeMotorBlock(it)));
+    fimCogItems.forEach(it=> cogWrap.appendChild(makeCogBlock(it)));
+  }
+
+  function updateFimTotals(){
+    const calc = computeFimTotals();
+    $("fim_motor").textContent = String(calc.motorSum);
+    $("fim_cog").textContent = String(calc.cogSum);
+    $("fim_total").textContent = String(calc.totalSum);
+    $("fim_count").textContent = String(calc.count);
+  }
+
+  // ====== B: FIMを要約生成時も必ず再計算 ======
+  function computeFimTotals(){
+    let motorSum=0, cogSum=0, count=0;
+
+    fimMotorItems.forEach(it=>{
+      const v = $(`fim_motor_${it.id}`)?.value || "";
+      const n = Number(v);
+      if(v && Number.isFinite(n)){ motorSum += n; count += 1; }
+    });
+    fimCogItems.forEach(it=>{
+      const v = $(`fim_cog_${it.id}`)?.value || "";
+      const n = Number(v);
+      if(v && Number.isFinite(n)){ cogSum += n; count += 1; }
+    });
+
+    return { motorSum, cogSum, totalSum: motorSum + cogSum, count };
+  }
+
+  // HDS scoring（前回維持）
+  function fillScoreSelect(id, max){
+    const el = $(id);
+    el.innerHTML = "";
+    for(let i=0;i<=max;i++){
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = String(i);
+      el.appendChild(opt);
+    }
+    el.value = "0";
+    el.addEventListener("change", updateHdsTotal);
+  }
+  function q9ToScore(n){
+    if(!Number.isFinite(n) || n < 0) return 0;
+    if(n <= 5) return 0;
+    if(n === 6) return 1;
+    if(n === 7) return 2;
+    if(n === 8) return 3;
+    if(n === 9) return 4;
+    return 5;
+  }
+  function updateHdsTotal(){
+    const s = computeHdsBreakdown();
+    $("hds_total").textContent = String(s.total);
+    $("hds_total_top").textContent = String(s.total);
+  }
+  function initHds(){
+    fillScoreSelect("hds_q1", 1);
+    fillScoreSelect("hds_q2_y", 1);
+    fillScoreSelect("hds_q2_m", 1);
+    fillScoreSelect("hds_q2_d", 1);
+    fillScoreSelect("hds_q2_w", 1);
+    fillScoreSelect("hds_q3", 2);
+    fillScoreSelect("hds_q4_a", 1);
+    fillScoreSelect("hds_q4_b", 1);
+    fillScoreSelect("hds_q4_c", 1);
+    fillScoreSelect("hds_q5_1", 1);
+    fillScoreSelect("hds_q5_2", 1);
+    fillScoreSelect("hds_q6_1", 1);
+    fillScoreSelect("hds_q6_2", 1);
+    fillScoreSelect("hds_q7_a", 2);
+    fillScoreSelect("hds_q7_b", 2);
+    fillScoreSelect("hds_q7_c", 2);
+    fillScoreSelect("hds_q8", 5);
+
+    $("hds_q9_count").addEventListener("input", ()=>{
+      const n = Number($("hds_q9_count").value);
+      $("hds_q9_score").textContent = String(q9ToScore(n));
+      updateHdsTotal();
+    });
+    updateHdsTotal();
+  }
+
+  // HDS項目別（Q1〜Q9）
+  function numVal(id, fallback="0"){
+    const v = $(id)?.value;
+    const n = Number(v ?? fallback);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function computeHdsBreakdown(){
+    const q1 = numVal("hds_q1");
+
+    const q2_y = numVal("hds_q2_y");
+    const q2_m = numVal("hds_q2_m");
+    const q2_d = numVal("hds_q2_d");
+    const q2_w = numVal("hds_q2_w");
+    const q2 = q2_y + q2_m + q2_d + q2_w;
+
+    const q3 = numVal("hds_q3");
+
+    const q4_a = numVal("hds_q4_a");
+    const q4_b = numVal("hds_q4_b");
+    const q4_c = numVal("hds_q4_c");
+    const q4 = q4_a + q4_b + q4_c;
+
+    const q5_1 = numVal("hds_q5_1");
+    const q5_2 = numVal("hds_q5_2");
+    const q5 = q5_1 + q5_2;
+
+    const q6_1 = numVal("hds_q6_1");
+    const q6_2 = numVal("hds_q6_2");
+    const q6 = q6_1 + q6_2;
+
+    const q7_a = numVal("hds_q7_a");
+    const q7_b = numVal("hds_q7_b");
+    const q7_c = numVal("hds_q7_c");
+    const q7 = q7_a + q7_b + q7_c;
+
+    const q8 = numVal("hds_q8");
+
+    const q9 = Number($("hds_q9_score")?.textContent || "0") || 0;
+
+    const total = q1 + q2 + q3 + q4 + q5 + q6 + q7 + q8 + q9;
+
+    return {
+      q1,
+      q2: { total: q2, y:q2_y, m:q2_m, d:q2_d, w:q2_w },
+      q3,
+      q4: { total: q4, a:q4_a, b:q4_b, c:q4_c },
+      q5: { total: q5, a:q5_1, b:q5_2 },
+      q6: { total: q6, a:q6_1, b:q6_2 },
+      q7: { total: q7, a:q7_a, b:q7_b, c:q7_c },
+      q8,
+      q9,
+      total
+    };
+  }
+
+  // Motor needed labels with device detail
+  function neededLabelsForMotor(id){
+    const keyBase = `motor_${id}`;
+    const set = fimNeededMap[keyBase] || new Set();
+    const labels = [];
+
+    for(const k of set){
+      const found = neededOptions.find(x=>x.key===k);
+      if(!found) continue;
+
+      if(k !== "device"){
+        labels.push(found.label);
+      }else{
+        const devSet = fimDeviceMap[keyBase] || new Set();
+        const devLabels = [];
+        for(const dk of devSet){
+          const d = deviceSubOptions.find(x=>x.key===dk);
+          if(d) devLabels.push(d.label);
+        }
+        const otherText = (devSet.has("other") && fimDeviceOtherText[keyBase]) ? fimDeviceOtherText[keyBase] : "";
+        let devStr = devLabels.length ? devLabels.join("／") : "-";
+        if(otherText) devStr += `（その他:${otherText}）`;
+        labels.push(`補助具:${devStr}`);
+      }
+    }
+    return labels;
+  }
+
+  // ===== Custom fields (config only) =====
+  function loadConfig(){
+    const raw = localStorage.getItem(CONFIG_KEY);
+    if(!raw) return { customFields: [] };
+    try{
+      const cfg = JSON.parse(raw);
+      cfg.customFields = Array.isArray(cfg.customFields) ? cfg.customFields : [];
+      return cfg;
+    }catch(e){
+      return { customFields: [] };
+    }
+  }
+  function saveConfig(cfg){ localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+  function resetConfig(){ localStorage.removeItem(CONFIG_KEY); }
+  let CONFIG = loadConfig();
+
+  function newId(){ return "cf_" + Math.random().toString(36).slice(2,10); }
+  function escapeHtml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  function renderCustomList(){
+    const list = $("custom_list");
+    list.innerHTML = "";
+
+    if(!CONFIG.customFields.length){
+      const p = document.createElement("div");
+      p.className = "hint";
+      p.textContent = "まだカスタム項目はありません。上の入力で追加できます。";
+      list.appendChild(p);
+      $("custom_values_form").innerHTML = "";
+      return;
+    }
+
+    CONFIG.customFields.forEach((f, i)=>{
+      const row = document.createElement("div");
+      row.className = "card";
+      row.style.marginBottom = "10px";
+      row.style.boxShadow = "none";
+      row.style.background = "color-mix(in srgb, var(--chip) 75%, transparent)";
+
+      const top = document.createElement("div");
+      top.style.display = "flex";
+      top.style.justifyContent = "space-between";
+      top.style.alignItems = "center";
+      top.style.gap = "10px";
+      top.style.flexWrap = "wrap";
+
+      const left = document.createElement("div");
+      left.innerHTML = `<strong>${escapeHtml(f.label)}</strong> <span class="badge">${f.type}</span>`;
+
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.gap = "8px";
+      right.style.flexWrap = "wrap";
+
+      const up = document.createElement("button");
+      up.className = "btn";
+      up.textContent = "↑";
+      up.disabled = (i===0);
+      up.addEventListener("click", ()=>{
+        const tmp = CONFIG.customFields[i-1];
+        CONFIG.customFields[i-1] = CONFIG.customFields[i];
+        CONFIG.customFields[i] = tmp;
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      const down = document.createElement("button");
+      down.className = "btn";
+      down.textContent = "↓";
+      down.disabled = (i===CONFIG.customFields.length-1);
+      down.addEventListener("click", ()=>{
+        const tmp = CONFIG.customFields[i+1];
+        CONFIG.customFields[i+1] = CONFIG.customFields[i];
+        CONFIG.customFields[i] = tmp;
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      const del = document.createElement("button");
+      del.className = "btn danger";
+      del.textContent = "削除";
+      del.addEventListener("click", ()=>{
+        if(!confirm(`「${f.label}」を削除しますか？`)) return;
+        CONFIG.customFields = CONFIG.customFields.filter(x=>x.id!==f.id);
+        saveConfig(CONFIG);
+        renderCustomList();
+        renderCustomForm();
+      });
+
+      right.appendChild(up);
+      right.appendChild(down);
+      right.appendChild(del);
+
+      top.appendChild(left);
+      top.appendChild(right);
+
+      const detail = document.createElement("div");
+      detail.className = "hint";
+      detail.textContent = (f.type==="select" || f.type==="multiselect")
+        ? `選択肢：${(f.options||[]).join(" / ")}`
+        : "自由入力";
+
+      row.appendChild(top);
+      row.appendChild(detail);
+      list.appendChild(row);
+    });
+
+    renderCustomForm();
+  }
+
+  function renderCustomForm(){
+    const form = $("custom_values_form");
+    form.innerHTML = "";
+    if(!CONFIG.customFields.length) return;
+
+    const title = document.createElement("div");
+    title.className = "score";
+    title.innerHTML = `カスタム項目の入力（患者データ：保存されません） <span class="badge">任意</span>`;
+    form.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "grid two";
+    grid.style.marginTop = "10px";
+
+    CONFIG.customFields.forEach(f=>{
+      const box = document.createElement("div");
+      const lab = document.createElement("label");
+      lab.textContent = f.label;
+      box.appendChild(lab);
+
+      if(f.type==="text"){
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.id = "val_" + f.id;
+        inp.placeholder = "任意";
+        box.appendChild(inp);
+      }else if(f.type==="textarea"){
+        const ta = document.createElement("textarea");
+        ta.id = "val_" + f.id;
+        ta.placeholder = "任意";
+        box.appendChild(ta);
+      }else if(f.type==="select"){
+        const sel = document.createElement("select");
+        sel.id = "val_" + f.id;
+        const opt0 = document.createElement("option");
+        opt0.value = ""; opt0.textContent = "未選択";
+        sel.appendChild(opt0);
+        (f.options||[]).forEach(o=>{
+          const opt = document.createElement("option");
+          opt.value = o; opt.textContent = o;
+          sel.appendChild(opt);
+        });
+        box.appendChild(sel);
+      }else if(f.type==="multiselect"){
+        const wrap = document.createElement("div");
+        wrap.className = "chkline";
+        wrap.id = "val_" + f.id;
+        (f.options||[]).forEach(o=>{
+          const lab2 = document.createElement("label");
+          lab2.className = "chk";
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.dataset.value = o;
+          lab2.appendChild(cb);
+          lab2.appendChild(document.createTextNode(o));
+          wrap.appendChild(lab2);
+        });
+        box.appendChild(wrap);
+      }
+      grid.appendChild(box);
+    });
+
+    form.appendChild(grid);
+  }
+
+  function addCustomField(){
+    const label = trim($("cf_label").value);
+    const type = $("cf_type").value;
+    const optionsRaw = trim($("cf_options").value);
+
+    if(!label){ cfgToast("項目名を入力してください。", false); return; }
+
+    let options = [];
+    if(type==="select" || type==="multiselect"){
+      options = optionsRaw.split(",").map(s=>s.trim()).filter(Boolean);
+      if(!options.length){
+        cfgToast("選択肢を「カンマ区切り」で入力してください。例）あり,なし,未確認", false);
+        return;
+      }
+    }
+
+    CONFIG.customFields.push({ id: newId(), label, type, options });
+    saveConfig(CONFIG);
+    $("cf_label").value = "";
+    $("cf_options").value = "";
+    renderCustomList();
+    cfgToast("カスタム項目を追加しました。");
+  }
+
+  function readCustomValues(){
+    const out = [];
+    CONFIG.customFields.forEach(f=>{
+      const key = f.label;
+      let val = "";
+      if(f.type==="text" || f.type==="textarea" || f.type==="select"){
+        val = trim(document.getElementById("val_"+f.id)?.value || "");
+      }else if(f.type==="multiselect"){
+        const wrap = document.getElementById("val_"+f.id);
+        if(wrap){
+          const selected = Array.from(wrap.querySelectorAll("input[type=checkbox]"))
+            .filter(cb=>cb.checked)
+            .map(cb=>cb.dataset.value);
+          val = selected.join("／");
+        }
+      }
+      if(val) out.push(`${key}：${val}`);
+    });
+    return out;
+  }
+
+  function exportConfig(){
+    const cfg = { version:"6.0", note:"患者情報は含みません（カスタム項目構成のみ）", customFields: CONFIG.customFields };
+    const blob = new Blob([JSON.stringify(cfg, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "config.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    cfgToast("config.json を書き出しました。");
+  }
+
+  function importConfigFile(file){
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const cfg = JSON.parse(reader.result);
+        cfg.customFields = Array.isArray(cfg.customFields) ? cfg.customFields : [];
+        CONFIG.customFields = cfg.customFields;
+        saveConfig(CONFIG);
+        renderCustomList();
+        cfgToast("設定を読み込みました。");
+      }catch(e){
+        cfgToast("設定の読み込みに失敗しました。", false);
+      }
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  // ===== 見やすい要約（見出し＋箇条書き） + FIM再計算 + HDS項目別 + SOAP寄せ =====
+  function buildSummary(){
+    const caseId = trim($("case_id").value);
+    if(!caseId){ alert("ケースID（必須）を入力してください。"); $("case_id").focus(); return ""; }
+    const dateDisp = yyyy_mm_dd(trim($("date").value)) || "（日付未入力）";
+
+    // B: 要約生成時に必ず再計算
+    const fim = computeFimTotals();
+    const hds = computeHdsBreakdown();
+    const hdsWords = trim($("hds_q4_words").value);
+
+    // GCS
+    const ge = numOrNull($("gcs_e").value);
+    const gv = numOrNull($("gcs_v").value);
+    const gm = numOrNull($("gcs_m").value);
+    const gcsTotal = (ge!==null && gv!==null && gm!==null) ? (ge+gv+gm) : null;
+
+    const lines = [];
+    const add = (s)=>{ if(s && s.trim()) lines.push(s); };
+    const addH = (t)=>{ add(""); add(`■ ${t}`); };
+    const addB = (s)=>{ if(s && s.trim()) add(`・${s}`); };
+
+    add(`【初期評価 要約】`);
+    add(`ケース：${caseId}　日付：${dateDisp}`);
+    add(`FIM 合計：${fim.totalSum}（運動${fim.motorSum}／認知${fim.cogSum}）　HDS-R：${hds.total}/30${gcsTotal!==null ? `　GCS：${gcsTotal}/15` : ""}`);
+    add(`※個人情報は入力しない（ケースID運用）`);
+
+    // ＜S＞（簡易）：意欲 + 一般メモ
+    const mot = $("motivation").selectedOptions[0]?.textContent || "";
+    const noteGeneral = trim($("note_general").value);
+    if(mot || noteGeneral){
+      addH("＜S＞（主観）");
+      if(mot && mot!=="未選択") addB(`リハ意欲：${mot}`);
+      if(noteGeneral) addB(`メモ：${noteGeneral}`);
+    }
+
+    // ＜O＞：バイタル/GCS
+    const bp = trim($("v_bp").value);
+    const hr = trim($("v_hr").value);
+    const spo2 = trim($("v_spo2").value);
+    const o2use = $("o2_use").selectedOptions[0]?.textContent || "";
+    const o2lpm = trim($("o2_lpm").value);
+
+    if(bp || hr || spo2 || (o2use && o2use!=="未選択") || gcsTotal!==null){
+      addH("＜O＞（客観）初期状況");
+      const vparts = [];
+      if(bp) vparts.push(`BP ${bp}`);
+      if(hr) vparts.push(`HR ${hr}`);
+      if(spo2) vparts.push(`SpO₂ ${spo2}`);
+      if(o2use && o2use!=="未選択"){
+        if(o2use==="あり") vparts.push(`O₂ あり${o2lpm ? `（${o2lpm}L）` : ""}`);
+        else vparts.push(`O₂ なし`);
+      }
+      if(vparts.length) addB(`バイタル：${vparts.join(" / ")}`);
+      if(gcsTotal!==null) addB(`意識：GCS E${ge} V${gv} M${gm}（${gcsTotal}/15）`);
+    }
+
+    // ＜I＞情報（住環境・介護）
+    addH("＜I＞情報（家族・住環境・介護）");
+
+    // Family
+    const family = {
+      discharge: $("discharge_plan").selectedOptions[0]?.textContent || "未選択",
+      living: $("living_status").selectedOptions[0]?.textContent || "未選択",
+      caregiver: $("main_caregiver").selectedOptions[0]?.textContent || "未選択",
+      freq: $("support_frequency").selectedOptions[0]?.textContent || "未選択",
+      wp: $("wish_patient").selectedOptions[0]?.textContent || "未選択",
+      wf: $("wish_family").selectedOptions[0]?.textContent || "未選択",
+      note: trim($("family_note").value)
+    };
+    addB(`【家族】退院先：${family.discharge}／同居：${family.living}／主介護者：${family.caregiver}／支援頻度：${family.freq}`);
+    addB(`【希望】本人：${family.wp}／家族：${family.wf}`);
+    if(family.note) addB(`【家族補足】${family.note}`);
+
+    // Environment
+    const env = {
+      housing: $("housing_type").selectedOptions[0]?.textContent || "未選択",
+      stairs: $("stairs").selectedOptions[0]?.textContent || "未選択",
+      bedroom: $("bedroom_floor").selectedOptions[0]?.textContent || "未選択",
+      toilet: $("toilet_floor").selectedOptions[0]?.textContent || "未選択",
+      entrance: $("entrance_step").selectedOptions[0]?.textContent || "未選択",
+      bath: readCheckLabelsFromContainer("bathroom_checks").join("／"),
+      dev: readCheckLabelsFromContainer("device_checks").join("／"),
+      note: trim($("env_note").value)
+    };
+    addB(`【住環境】住宅：${env.housing}／階段：${env.stairs}／寝室：${env.bedroom}／トイレ：${env.toilet}／玄関段差：${env.entrance}`);
+    if(env.bath) addB(`【浴室】${env.bath}`);
+    if(env.dev)  addB(`【福祉用具・環境】${env.dev}`);
+    if(env.note) addB(`【住環境補足】${env.note}`);
+
+    // Support
+    const support = {
+      ltc: $("ltc_insurance").selectedOptions[0]?.textContent || "未選択",
+      services: readCheckLabelsFromContainer("services_checks").join("／"),
+      outpt: $("outpatient_support").selectedOptions[0]?.textContent || "未選択",
+      note: trim($("support_note").value)
+    };
+    addB(`【介護】介護保険：${support.ltc}${support.services ? `／サービス：${support.services}` : ""}／通院支援：${support.outpt}`);
+    if(support.note) addB(`【介護補足】${support.note}`);
+
+    // ＜O＞評価（起居・トイレ・所見・HDS・FIM）
+    addH("＜O＞評価（動作・所見・スコア）");
+
+    // Bed mobility
+    const bed = {
+      roll: trim($("bed_roll").value) || "未選択",
+      situp: trim($("bed_situp").value) || "未選択",
+      sitting: trim($("bed_sitting").value) || "未選択",
+      standup: trim($("bed_standup").value) || "未選択"
+    };
+    addB(`【起居】寝返り：${bed.roll}／起き上がり：${bed.situp}／座位保持：${bed.sitting}／立ち上がり：${bed.standup}`);
+
+    // Toileting detail（追加）
+    const tm = $("to_move_method").selectedOptions[0]?.textContent || "未選択";
+    const ta = $("to_move_assist").selectedOptions[0]?.textContent || "未選択";
+    const tin = {
+      tr: $("to_in_transfer").selectedOptions[0]?.textContent || "未選択",
+      cl: $("to_in_cloth").selectedOptions[0]?.textContent || "未選択",
+      si: $("to_in_sit").selectedOptions[0]?.textContent || "未選択",
+      cn: $("to_in_clean").selectedOptions[0]?.textContent || "未選択",
+    };
+    const uu = $("urge_u").selectedOptions[0]?.textContent || "未選択";
+    const ut = $("urge_u_tell").selectedOptions[0]?.textContent || "未選択";
+    const bu = $("urge_b").selectedOptions[0]?.textContent || "未選択";
+    const bt = $("urge_b_tell").selectedOptions[0]?.textContent || "未選択";
+
+    // なるべく未選択は出しすぎない（全部未選択なら行を出さない）
+    const toiletAny =
+      (tm!=="未選択") || (ta!=="未選択") ||
+      (tin.tr!=="未選択") || (tin.cl!=="未選択") || (tin.si!=="未選択") || (tin.cn!=="未選択") ||
+      (uu!=="未選択") || (ut!=="未選択") || (bu!=="未選択") || (bt!=="未選択");
+
+    if(toiletAny){
+      if(tm!=="未選択" || ta!=="未選択") addB(`【トイレ移動】手段：${tm}／介助：${ta}`);
+      const inParts = [];
+      if(tin.tr!=="未選択") inParts.push(`移乗:${tin.tr}`);
+      if(tin.cl!=="未選択") inParts.push(`下衣:${tin.cl}`);
+      if(tin.si!=="未選択") inParts.push(`着座:${tin.si}`);
+      if(tin.cn!=="未選択") inParts.push(`後始末:${tin.cn}`);
+      if(inParts.length) addB(`【トイレ内】${inParts.join("／")}`);
+      const urgeParts = [];
+      if(uu!=="未選択") urgeParts.push(`尿意:${uu}${ut!=="未選択" ? `（訴え:${ut}）` : ""}`);
+      if(bu!=="未選択") urgeParts.push(`便意:${bu}${bt!=="未選択" ? `（訴え:${bt}）` : ""}`);
+      if(urgeParts.length) addB(`【尿意・便意】${urgeParts.join("／")}`);
+    }
+
+    // Neuro
+    const neuro = (function(){
+      const paral = [];
+      if($("paral_ue_l").checked) paral.push("上肢左");
+      if($("paral_ue_r").checked) paral.push("上肢右");
+      if($("paral_le_l").checked) paral.push("下肢左");
+      if($("paral_le_r").checked) paral.push("下肢右");
+
+      const rom = [];
+      if($("rom_ue_l").checked) rom.push("上肢左");
+      if($("rom_ue_r").checked) rom.push("上肢右");
+      if($("rom_le_l").checked) rom.push("下肢左");
+      if($("rom_le_r").checked) rom.push("下肢右");
+
+      const sens = [];
+      if($("sens_ue_l").checked) sens.push("上肢左");
+      if($("sens_ue_r").checked) sens.push("上肢右");
+      if($("sens_le_l").checked) sens.push("下肢左");
+      if($("sens_le_r").checked) sens.push("下肢右");
+      if($("sens_other").checked) sens.push("その他");
+
+      return {
+        paral,
+        rom,
+        sens,
+        sensOther: trim($("sens_other_note").value),
+        pain: trim($("pain_yes").value),
+        painSite: trim($("pain_site").value)
+      };
+    })();
+
+    const findParts = [];
+    if(neuro.paral.length) findParts.push(`麻痺:${neuro.paral.join("・")}`);
+    if(neuro.rom.length) findParts.push(`ROM制限:${neuro.rom.join("・")}`);
+    if(neuro.sens.length) findParts.push(`感覚:${neuro.sens.join("・")}${neuro.sensOther ? `（${neuro.sensOther}）` : ""}`);
+    if(neuro.pain) findParts.push(`疼痛:${neuro.pain}${neuro.painSite ? `（${neuro.painSite}）` : ""}`);
+    if(findParts.length) addB(`【所見】${findParts.join("／")}`);
+
+    // HDS-R breakdown（あなたの前回形式）
+    addB(`【HDS-R】Q1:${hds.q1}/1　Q2:${hds.q2.total}/4（年${hds.q2.y}/月${hds.q2.m}/日${hds.q2.d}/曜${hds.q2.w}）　Q3:${hds.q3}/2`);
+    addB(`【HDS-R】Q4:${hds.q4.total}/3（${hds.q4.a},${hds.q4.b},${hds.q4.c}）　Q5:${hds.q5.total}/2（${hds.q5.a},${hds.q5.b}）　Q6:${hds.q6.total}/2（${hds.q6.a},${hds.q6.b}）`);
+    addB(`【HDS-R】Q7:${hds.q7.total}/6（${hds.q7.a},${hds.q7.b},${hds.q7.c}）　Q8:${hds.q8}/5　Q9:${hds.q9}/5　合計:${hds.total}/30`);
+    if(hdsWords) addB(`【HDS-R】採用語：${hdsWords}`);
+
+    // FIM Motor (with linking)
+    const mode = $("locomotion_mode")?.value || "";
+    const modeLabel = (mode==="walk")?"歩行":(mode==="wheelchair")?"車椅子":(mode==="unknown")?"未確認":"未選択";
+
+    let motorAny = false;
+    const motorLines = [];
+    fimMotorItems.forEach(it=>{
+      const score = $(`fim_motor_${it.id}`)?.value || "";
+      const need = neededLabelsForMotor(it.id) || [];
+      const hasScore = !!score;
+      const hasNeed = need.length > 0;
+      if(!hasScore && !hasNeed) return;
+
+      motorAny = true;
+      const label = (it.id==="locomotion") ? `移動（${modeLabel}）` : it.label;
+      const scoreText = hasScore ? `：${score}` : "";
+      const needText = hasNeed ? `　必要：${need.join("／")}` : "";
+      motorLines.push(`${label}${scoreText}${needText}`);
+    });
+    if(motorLines.length){
+      addB(`【FIM運動】${motorLines.join("｜")}`);
+    }else if(!motorAny){
+      addB("【FIM運動】（未入力）");
+    }
+    const adlNote = trim($("adl_note").value);
+    if(adlNote) addB(`【FIM運動補足】${adlNote}`);
+
+    // FIM Cognition
+    let cogAny = false;
+    const cogLines = [];
+    fimCogItems.forEach(it=>{
+      const score = $(`fim_cog_${it.id}`)?.value || "";
+      if(!score) return;
+      cogAny = true;
+      cogLines.push(`${it.label}:${score}`);
+    });
+    if(cogLines.length){
+      addB(`【FIM認知】${cogLines.join("／")}`);
+    }else if(!cogAny){
+      addB("【FIM認知】（未入力）");
+    }
+    const cogNote = trim($("cog_note").value);
+    if(cogNote) addB(`【FIM認知補足】${cogNote}`);
+
+    // Custom
+    const customVals = readCustomValues();
+    if(customVals.length){
+      addH("カスタム（任意）");
+      customVals.forEach(v=> addB(v));
+    }
+
+    return lines.join("\n");
+  }
+
+  async function copyOutput(){
+    const text = $("output").value;
+    if(!text){ toast("先に「要約を生成」してください。", false); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      toast("コピーしました。");
+    }catch(e){
+      $("output").focus(); $("output").select();
+      document.execCommand("copy");
+      toast("コピーしました（互換モード）。");
+    }
+  }
+
+  function mailtoOpen(){
+    const to = getMailTo();
+    if(!to){ toast("送信先メールが未設定です。先に『宛先を保存』してください。", false); $("mail_to").focus(); return; }
+    const text = $("output").value || buildSummary();
+    if(!text) return;
+    $("output").value = text;
+    const subj = `${trim($("case_id").value)}_初期評価_${yyyymmdd(trim($("date").value)) || "DATE"}`;
+    const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(text)}`;
+    window.location.href = url;
+  }
+
+  function clearAllPatientInputs(){
+    [
+      "case_id","note_general",
+      "family_note","env_note","support_note",
+      "sens_other_note","pain_site","adl_note","cog_note","hds_q4_words","hds_q9_count",
+      "v_bp","v_hr","v_spo2","o2_lpm"
+    ].forEach(id=>{ const el=$(id); if(el) el.value=""; });
+
+    // selects
+    [
+      "motivation","o2_use",
+      "gcs_e","gcs_v","gcs_m",
+      "discharge_plan","living_status","main_caregiver","support_frequency","wish_patient","wish_family",
+      "housing_type","stairs","bedroom_floor","toilet_floor","entrance_step",
+      "ltc_insurance","outpatient_support","bed_roll","bed_situp","bed_sitting","bed_standup","pain_yes",
+      "to_move_method","to_move_assist","to_in_transfer","to_in_cloth","to_in_sit","to_in_clean",
+      "urge_u","urge_u_tell","urge_b","urge_b_tell",
+      "hds_q1","hds_q2_y","hds_q2_m","hds_q2_d","hds_q2_w","hds_q3","hds_q4_a","hds_q4_b","hds_q4_c",
+      "hds_q5_1","hds_q5_2","hds_q6_1","hds_q6_2","hds_q7_a","hds_q7_b","hds_q7_c","hds_q8"
+    ].forEach(id=>{ const el=$(id); if(el) el.value="0"; });
+
+    // Motivation/O2/GCS/Toilet need non-zero defaults
+    if($("motivation")) $("motivation").value = "";
+    if($("o2_use")) $("o2_use").value = "";
+    if($("gcs_e")) $("gcs_e").value = "";
+    if($("gcs_v")) $("gcs_v").value = "";
+    if($("gcs_m")) $("gcs_m").value = "";
+    ["to_move_method","to_move_assist","to_in_transfer","to_in_cloth","to_in_sit","to_in_clean","urge_u","urge_u_tell","urge_b","urge_b_tell"].forEach(id=>{
+      const el=$(id); if(el) el.value="";
+    });
+
+    [...bathroomItems, ...deviceItems, ...serviceItems].forEach(it=>{ const el=$(it.id); if(el) el.checked=false; });
+    ["paral_ue_l","paral_ue_r","paral_le_l","paral_le_r","rom_ue_l","rom_ue_r","rom_le_l","rom_le_r",
+     "sens_ue_l","sens_ue_r","sens_le_l","sens_le_r","sens_other"].forEach(id=>{ const el=$(id); if(el) el.checked=false; });
+
+    fimMotorItems.forEach(it=>{
+      const sel = $(`fim_motor_${it.id}`);
+      if(sel) sel.value="";
+      fimNeededMap[`motor_${it.id}`]=new Set();
+      fimDeviceMap[`motor_${it.id}`]=new Set();
+      fimDeviceOtherText[`motor_${it.id}`]="";
+    });
+    fimCogItems.forEach(it=>{
+      const sel = $(`fim_cog_${it.id}`);
+      if(sel) sel.value="";
+    });
+
+    document.querySelectorAll(".fim-needed input[type=checkbox]").forEach(cb=> cb.checked=false);
+    document.querySelectorAll(".subcard input[type=checkbox]").forEach(cb=> cb.checked=false);
+    document.querySelectorAll(".subcard input[type=text]").forEach(inp=>{ inp.value=""; inp.style.display="none"; });
+
+    $("hds_q9_score").textContent = "0";
+    $("output").value="";
+    setToday();
+    updateFimTotals();
+    updateHdsTotal();
+    updateGcs();
+    toast("入力をクリアしました。");
+  }
+
+  function initStaticUI(){
+    // existing
+    fillSelect("discharge_plan", optDischarge);
+    fillSelect("living_status", optLiving);
+    fillSelect("main_caregiver", optCaregiver);
+    fillSelect("support_frequency", optFreq);
+    fillSelect("wish_patient", optWish);
+    fillSelect("wish_family", optWish);
+
+    fillSelect("housing_type", optHousing);
+    fillSelect("stairs", optYesNo);
+    fillSelect("bedroom_floor", optBedroom);
+    fillSelect("toilet_floor", optToilet);
+    fillSelect("entrance_step", optEntrance);
+
+    fillSelect("ltc_insurance", optLTC);
+    fillSelect("outpatient_support", optOutpt);
+
+    makeChecks("bathroom_checks", bathroomItems);
+    makeChecks("device_checks", deviceItems);
+    makeChecks("services_checks", serviceItems);
+
+    ["bed_roll","bed_situp","bed_sitting","bed_standup"].forEach(fillBedSelect);
+
+    // additions
+    fillSelect("motivation", optMotivation);
+    fillSelect("o2_use", optO2);
+
+    fillSelect("to_move_method", optToMoveMethod);
+    fillSelect("to_move_assist", optAssist4);
+    fillSelect("to_in_transfer", optAssist4);
+    fillSelect("to_in_cloth", optAssist4);
+    fillSelect("to_in_sit", optAssist4);
+    fillSelect("to_in_clean", optAssist4);
+    fillSelect("urge_u", optUrge);
+    fillSelect("urge_u_tell", optTell);
+    fillSelect("urge_b", optUrge);
+    fillSelect("urge_b_tell", optTell);
+
+    fillSelect("gcs_e", optGcsE);
+    fillSelect("gcs_v", optGcsV);
+    fillSelect("gcs_m", optGcsM);
+
+    initFimUI();
+    setToday();
+  }
+
+  function bindEvents(){
+    $("btn_generate").addEventListener("click", ()=>{
+      const s = buildSummary();
+      if(s){ $("output").value = s; toast("要約を生成しました。"); }
+    });
+    $("btn_copy").addEventListener("click", copyOutput);
+    $("btn_mail").addEventListener("click", mailtoOpen);
+    $("btn_clear").addEventListener("click", ()=>{
+      if(confirm("入力（患者データ）をクリアします。よろしいですか？")) clearAllPatientInputs();
+    });
+
+    $("btn_cf_add").addEventListener("click", addCustomField);
+    $("btn_cf_clear").addEventListener("click", ()=>{
+      $("cf_label").value=""; $("cf_options").value=""; $("cf_type").value="text";
+    });
+
+    $("btn_export").addEventListener("click", exportConfig);
+    $("btn_import").addEventListener("click", ()=> $("file_input").click());
+    $("file_input").addEventListener("change", (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(f) importConfigFile(f);
+      e.target.value = "";
+    });
+
+    $("btn_config_reset").addEventListener("click", ()=>{
+      if(!confirm("設定（カスタム項目）を初期化します。よろしいですか？")) return;
+      resetConfig();
+      CONFIG = loadConfig();
+      renderCustomList();
+      cfgToast("設定を初期化しました。");
+    });
+
+    // GCS update
+    ["gcs_e","gcs_v","gcs_m"].forEach(id=>{
+      const el=$(id);
+      if(el) el.addEventListener("change", updateGcs);
+    });
+
+    window.addEventListener("pagehide", ()=>{ try{ clearAllPatientInputs(); }catch(_){} });
+  }
+
+  // Boot
+  (function boot(){
+    initTheme();
+    initMailSetting();
+    initStaticUI();
+    initHds();
+    renderCustomList();
+    bindEvents();
+    updateFimTotals();
+    updateHdsTotal();
+    updateGcs();
+  })();
 </script>
 </body>
 </html>
